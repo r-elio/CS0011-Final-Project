@@ -19,7 +19,6 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private Cursor cursor;
-
     private EditText username;
     private EditText password;
     private Button loginButton;
@@ -36,21 +35,13 @@ public class MainActivity extends AppCompatActivity {
             db = databaseHelper.getReadableDatabase();
         }
         catch (SQLiteException e){
-            Toast.makeText(this,"SQLiteException: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"SQLiteException: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }
 
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         loginButton = findViewById(R.id.login_button);
-        register = findViewById(R.id.register);
-
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(),RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
+        register = findViewById(R.id.register_button);
 
         password.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -69,6 +60,21 @@ public class MainActivity extends AppCompatActivity {
                 login();
             }
         });
+
+        register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(),RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    protected void onStart(){
+        super.onStart();
+        username.setError(null);
+        password.setError(null);
     }
 
     @Override
@@ -79,26 +85,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void login(){
-        if (username.getText().toString().isEmpty()){
-            Toast.makeText(getApplicationContext(),"Username is empty", Toast.LENGTH_SHORT).show();
+        String userText = username.getText().toString();
+        String passText = password.getText().toString();
+
+        if (userText.isEmpty()){
+            username.setError("Empty Field");
         }
-        else if (password.getText().toString().isEmpty()){
-            Toast.makeText(getApplicationContext(),"Password is empty", Toast.LENGTH_SHORT).show();
+        if (passText.isEmpty()){
+            password.setError("Empty Field");
+        }
+
+        if (userText.isEmpty() || passText.isEmpty()){
+            return;
+        }
+
+        cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.USERNAME,DatabaseHelper.PASSWORD,
+                        DatabaseHelper.FIRSTNAME,DatabaseHelper.LASTNAME},
+                DatabaseHelper.USERNAME + " = ? AND " + DatabaseHelper.PASSWORD + "= ?",
+                new String[]{userText,passText}, null,null,null);
+        if (cursor.moveToFirst()){
+            Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
+            intent.putExtra(DatabaseHelper.FIRSTNAME,cursor.getString(2));
+            intent.putExtra(DatabaseHelper.LASTNAME,cursor.getString(3));
+            startActivity(intent);
+            finish();
         }
         else {
-            String userText = username.getText().toString();
-            String passText = password.getText().toString();
-            cursor = db.query("ACCOUNT",new String[]{"USERNAME","PASSWORD"},
-                    "USERNAME = ? AND PASSWORD = ?",new String[]{userText,passText},
-                    null,null,null);
-            if (cursor.moveToFirst()){
-                Intent intent = new Intent(getApplicationContext(),HomeActivity.class);
-                startActivity(intent);
-                finish();
-            }
-            else {
-                Toast.makeText(getApplicationContext(),"Invalid username/password", Toast.LENGTH_SHORT).show();
-            }
+            Toast.makeText(getApplicationContext(),"Invalid username/password", Toast.LENGTH_SHORT).show();
         }
     }
 }
