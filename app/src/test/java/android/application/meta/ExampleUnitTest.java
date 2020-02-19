@@ -1,4 +1,4 @@
-package android.application.project;
+package android.application.meta;
 
 import org.junit.Test;
 

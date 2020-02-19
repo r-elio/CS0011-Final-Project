@@ -1,10 +1,3 @@
 <resources>
-    <string name="app_name">ALPHA</string>
-    <string name="username_hint">Username</string>
-    <string name="password_hint">Password</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
-    <string name="first_name_hint">First Name</string>
-    <string name="last_name_hint">Last Name</string>
-    <string name="confirm_password_hint">Confirm Password</string>
+    <string name="app_name">Meta</string>
 </resources>
