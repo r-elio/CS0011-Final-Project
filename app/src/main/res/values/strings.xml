@@ -1,11 +1,3 @@
 <resources>
     <string name="app_name">Meta</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="login">Login</string>
-    <string name="register">Register</string>
-
-    <string name="nav_open_drawer">Open navigation drawer</string>
-    <string name="nav_close_drawer">Close navigation drawer</string>
-
 </resources>
