@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Meta</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+
+    <string name="sql_exception">SQLiteException</string>
+    <string name="login_failed">Login Failed</string>
+    <string name="db_unavailable">Database is unavailable.</string>
+    <string name="login_failed_message">Invalid username/password.</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="firstname">First Name (Optional)</string>
+    <string name="lastname">Last Name (Optional)</string>
+    <string name="confirm_pass">Confirm Password</string>
+
+    <string name="user_error">Enter the username</string>
+    <string name="pass_error">Enter the password</string>
+    <string name="confirm_error">Enter the confirm password</string>
+    <string name="pass_match_error">Password does not match</string>
+    <string name="user_taken">Username already taken</string>
 </resources>

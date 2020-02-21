@@ -1,10 +1,11 @@
 package android.application.meta;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -19,22 +20,33 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class MainActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private Cursor cursor;
 
     private TextInputLayout username;
-    private  TextInputLayout password;
+    private TextInputLayout password;
+    private TextInputLayout confirm_pass;
+
     private TextInputEditText userText;
     private TextInputEditText passText;
+    private TextInputEditText confirmText;
+    private TextInputEditText firstText;
+    private TextInputEditText lastText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_register);
 
-        Button login;
-        TextView register;
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
+        Button register;
 
         SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
         try {
@@ -56,21 +68,24 @@ public class MainActivity extends AppCompatActivity {
 
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
+        confirm_pass = findViewById(R.id.confirm_pass);
         userText = findViewById(R.id.userText);
         passText = findViewById(R.id.passText);
-        login = findViewById(R.id.login);
+        confirmText = findViewById(R.id.confirmText);
+        firstText = findViewById(R.id.firstText);
+        lastText = findViewById(R.id.lastText);
         register = findViewById(R.id.register);
 
         username.setErrorEnabled(true);
         password.setErrorEnabled(true);
+        confirm_pass.setErrorEnabled(true);
 
         userText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (userText.getText() != null && !userText.getText().toString().isEmpty()){
+                if (!v.getText().toString().isEmpty()){
                     username.setError(null);
                 }
-
                 return false;
             }
         });
@@ -78,11 +93,23 @@ public class MainActivity extends AppCompatActivity {
         passText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (passText.getText() != null && !passText.getText().toString().isEmpty()){
+                if (!v.getText().toString().isEmpty()){
                     password.setError(null);
                 }
 
-                passText.clearFocus();
+                return false;
+            }
+        });
+
+        confirmText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (!v.getText().toString().isEmpty() || passText.getText() != null &&
+                        v.getText().equals(passText.getText().toString())){
+                    confirm_pass.setError(null);
+                }
+
+                v.clearFocus();
                 InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
                 if (imm != null){
                     imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
@@ -92,16 +119,21 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        login.setOnClickListener(new View.OnClickListener() {
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userStr = "";
                 String passStr = "";
+                String confirmStr = "";
+                String firstStr = "";
+                String lastStr = "";
+                boolean isNullInput = false;
 
                 if (userText.getText() != null) userStr = userText.getText().toString();
                 if (passText.getText() != null) passStr = passText.getText().toString();
-
-                boolean isNullInput = false;
+                if (confirmText.getText() != null) confirmStr = confirmText.getText().toString();
+                if (firstText.getText() != null) firstStr = firstText.getText().toString();
+                if (lastText.getText() != null) lastStr = lastText.getText().toString();
 
                 if (userStr.isEmpty()){
                     username.setError(getResources().getString(R.string.user_error));
@@ -111,39 +143,30 @@ public class MainActivity extends AppCompatActivity {
                     password.setError(getResources().getString(R.string.pass_error));
                     isNullInput = true;
                 }
+                if (confirmStr.isEmpty()){
+                    confirm_pass.setError(getResources().getString(R.string.confirm_error));
+                    isNullInput = true;
+                }
+                if (!confirmStr.equals(passStr)){
+                    confirm_pass.setError(getResources().getString(R.string.pass_match_error));
+                    isNullInput = true;
+                }
 
                 if (isNullInput){
                     return;
                 }
 
-                cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],DatabaseHelper.ACCOUNT_TABLE[2]},
-                        DatabaseHelper.ACCOUNT_TABLE[1] + " = ? AND " + DatabaseHelper.ACCOUNT_TABLE[2] + " = ?",
-                        new String[]{userStr,passStr},null,null,null);
+                cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1]},
+                        DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",
+                        new String[]{userStr},null,null,null);
 
                 if (cursor.moveToFirst()){
-                    finish();
+                    username.setError(getResources().getString(R.string.user_taken));
                 }
                 else {
-                    new AlertDialog.Builder(MainActivity.this)
-                            .setTitle(R.string.login_failed)
-                            .setMessage(R.string.login_failed_message)
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.cancel();
-                                }
-                            })
-                            .create()
-                            .show();
+                    DatabaseHelper.insertAccount(db,userStr,passStr,firstStr,lastStr);
+                    finish();
                 }
-            }
-        });
-
-        register.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,RegisterActivity.class);
-                startActivity(intent);
             }
         });
     }
