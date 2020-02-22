@@ -23,7 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "PASSWORD TEXT NOT NULL," +
                 "FIRSTNAME TEXT," +
                 "LASTNAME TEXT);");
-        insertAccount(db,"rajan","elio");
+        insertAccount(db,"r","e","Rajan","Elio");
     }
 
     @Override
@@ -39,5 +39,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ++i;
         }
         db.insert("ACCOUNT",null,accountValues);
+    }
+
+    static void updateAccount(SQLiteDatabase db, String username, String...values){
+        ContentValues accountValues = new ContentValues();
+        int i = 1;
+        for (String value : values){
+            accountValues.put(ACCOUNT_TABLE[i],value);
+            ++i;
+        }
+        db.update("ACCOUNT",accountValues,
+                ACCOUNT_TABLE[1] + " = ?", new String[]{username});
     }
 }

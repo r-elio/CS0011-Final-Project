@@ -53,7 +53,7 @@
                     android:id="@+id/firstText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/firstname"
+                    android:hint="@string/firstname_hint"
                     android:inputType="textPersonName"
                     android:selectAllOnFocus="true"
                     android:singleLine="true" />
@@ -69,7 +69,7 @@
                     android:id="@+id/lastText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/lastname"
+                    android:hint="@string/lastname_hint"
                     android:inputType="textPersonName"
                     android:selectAllOnFocus="true"
                     android:singleLine="true" />
@@ -112,7 +112,7 @@
     </ScrollView>
 
     <Button
-        android:id="@+id/register"
+        android:id="@+id/button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"

@@ -1,9 +1,9 @@
 package android.application.meta;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class RegisterActivity extends AppCompatActivity {
+public class EditProfileActivity extends AppCompatActivity {
     private SQLiteDatabase db;
     private Cursor cursor;
 
@@ -41,12 +41,8 @@ public class RegisterActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
 
-        Button register;
+        Button save;
 
         SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
         try {
@@ -76,11 +72,27 @@ public class RegisterActivity extends AppCompatActivity {
         confirmText = findViewById(R.id.confirmText);
         firstText = findViewById(R.id.firstText);
         lastText = findViewById(R.id.lastText);
-        register = findViewById(R.id.button);
+        save = findViewById(R.id.button);
+
+        firstText.setHint(R.string.firstname);
+        lastText.setHint(R.string.lastname);
+        save.setText(R.string.save);
 
         username.setErrorEnabled(true);
         password.setErrorEnabled(true);
         confirm_pass.setErrorEnabled(true);
+
+        cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+                        DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
+                DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",new String[]{HomeActivity.user},
+                null,null,null);
+
+        if (cursor.moveToFirst()){
+            userText.setText(cursor.getString(0));
+            passText.setText(cursor.getString(1));
+            firstText.setText(cursor.getString(2));
+            lastText.setText(cursor.getString(3));
+        }
 
         userText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -121,7 +133,7 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
-        register.setOnClickListener(new View.OnClickListener() {
+        save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String userStr = "";
@@ -162,13 +174,9 @@ public class RegisterActivity extends AppCompatActivity {
                         DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",
                         new String[]{userStr},null,null,null);
 
-                if (cursor.moveToFirst()){
-                    username.setError(getResources().getString(R.string.user_taken));
-                }
-                else {
-                    DatabaseHelper.insertAccount(db,userStr,passStr,firstStr,lastStr);
-                    finish();
-                }
+                DatabaseHelper.updateAccount(db,HomeActivity.user,userStr,passStr,firstStr,lastStr);
+                HomeActivity.user = userStr;
+                finish();
             }
         });
     }

@@ -13,25 +13,28 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 public class HomeActivity extends AppCompatActivity {
     public static final String EXTRA_USER = "user";
+    public static String user;
+    ViewPager viewPager;
     FloatingActionButton fab;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        user = getIntent().getStringExtra(EXTRA_USER);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         SectionPageAdapter pagerAdapter = new SectionPageAdapter(getSupportFragmentManager(),FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        ViewPager viewPager = findViewById(R.id.view_pager);
+        viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(1);
 
@@ -40,6 +43,17 @@ public class HomeActivity extends AppCompatActivity {
 
         fab = findViewById(R.id.fab);
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (viewPager.getCurrentItem() == 0){
+                    Intent intent = new Intent(HomeActivity.this,EditProfileActivity.class);
+                    intent.putExtra(HomeActivity.EXTRA_USER,user);
+                    startActivity(intent);
+                }
+            }
+        });
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
@@ -47,7 +61,12 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
                 switch (position){
+                    case 0:
+                        fab.setImageResource(R.drawable.ic_edit_black_24dp);
+                        fab.show();
+                        break;
                     case 1: case 2:
+                        fab.setImageResource(R.drawable.ic_add_black_24dp);
                         fab.show();
                         break;
                     default:
