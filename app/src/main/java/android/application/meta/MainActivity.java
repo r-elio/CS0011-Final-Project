@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         }
         catch (SQLiteException e){
             new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_error_outline_red_24dp)
                     .setTitle(R.string.sql_exception)
                     .setMessage(R.string.db_unavailable)
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
                             finish();
                         }
                     })
+                    .setCancelable(false)
                     .create()
                     .show();
         }
@@ -121,10 +123,14 @@ public class MainActivity extends AppCompatActivity {
                         new String[]{userStr,passStr},null,null,null);
 
                 if (cursor.moveToFirst()){
+                    Intent intent = new Intent(MainActivity.this,HomeActivity.class);
+                    intent.putExtra(HomeActivity.EXTRA_USER,userStr);
+                    startActivity(intent);
                     finish();
                 }
                 else {
                     new AlertDialog.Builder(MainActivity.this)
+                            .setIcon(R.drawable.ic_error_outline_red_24dp)
                             .setTitle(R.string.login_failed)
                             .setMessage(R.string.login_failed_message)
                             .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -133,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             })
+                            .setCancelable(false)
                             .create()
                             .show();
                 }
@@ -155,5 +162,28 @@ public class MainActivity extends AppCompatActivity {
             cursor.close();
         }
         db.close();
+    }
+
+    @Override
+    public void onBackPressed(){
+        new AlertDialog.Builder(this)
+                .setIcon(R.drawable.ic_error_outline_yellow_24dp)
+                .setTitle(R.string.exit)
+                .setMessage(R.string.exit_message)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .setCancelable(false)
+                .create()
+                .show();
     }
 }

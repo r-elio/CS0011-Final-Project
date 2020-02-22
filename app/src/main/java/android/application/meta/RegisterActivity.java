@@ -54,6 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
         }
         catch (SQLiteException e){
             new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_error_outline_red_24dp)
                     .setTitle(R.string.sql_exception)
                     .setMessage(R.string.db_unavailable)
                     .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
@@ -62,6 +63,7 @@ public class RegisterActivity extends AppCompatActivity {
                             finish();
                         }
                     })
+                    .setCancelable(false)
                     .create()
                     .show();
         }
