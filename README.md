@@ -1,4 +1,6 @@
 # CS0011-Final-Project
 Mobile Programming Final Project
 
-Meta
+Delta
+
+Time-Based Activity Tracker
