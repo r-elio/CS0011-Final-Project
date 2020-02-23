@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements ActivityDialogFragment.EditTextListener {
     public static SQLiteDatabase db;
 
     public static final String EXTRA_USER = "user";
@@ -65,6 +65,10 @@ public class HomeActivity extends AppCompatActivity {
                     Intent intent = new Intent(HomeActivity.this,EditProfileActivity.class);
                     intent.putExtra(HomeActivity.EXTRA_USER,user);
                     startActivity(intent);
+                }
+                else if (viewPager.getCurrentItem() == 1){
+                    ActivityDialogFragment dialog = new ActivityDialogFragment();
+                    dialog.show(getSupportFragmentManager(),null);
                 }
             }
         });
@@ -174,10 +178,23 @@ public class HomeActivity extends AppCompatActivity {
                 .show();
     }
 
+    @Override
+    public void onAdd(String name) {
+        DatabaseHelper.insertActivity(db,HomeActivity.user,name);
+        if (viewPager.getAdapter() != null){
+            viewPager.getAdapter().notifyDataSetChanged();
+        }
+    }
+
     private class SectionPageAdapter extends FragmentPagerAdapter {
 
         SectionPageAdapter(@NonNull FragmentManager fm, int behavior) {
             super(fm, behavior);
+        }
+
+        @Override
+        public int getItemPosition(@NonNull Object object) {
+            return POSITION_NONE;
         }
 
         @Override
