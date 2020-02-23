@@ -3,24 +3,19 @@ package android.application.meta;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import android.text.method.PasswordTransformationMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class ProfileFragment extends Fragment {
-    private SQLiteDatabase db;
-
     private TextView username;
     private TextView firstname;
     private TextView lastname;
@@ -36,14 +31,6 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View view =  inflater.inflate(R.layout.fragment_profile, container, false);
-
-        SQLiteOpenHelper databaseHelper = new DatabaseHelper(view.getContext());
-        try {
-            db = databaseHelper.getReadableDatabase();
-        }
-        catch (SQLiteException e){
-            Toast.makeText(view.getContext(),R.string.db_unavailable,Toast.LENGTH_SHORT).show();
-        }
 
         Button delete;
 
@@ -81,8 +68,7 @@ public class ProfileFragment extends Fragment {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                db.delete("ACCOUNT",DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",
-                                        new String[]{HomeActivity.user});
+                                DatabaseHelper.deleteAccount(HomeActivity.db,HomeActivity.user);
                                 if (getActivity()!= null){
                                     Intent intent = new Intent(getActivity().getApplicationContext(),MainActivity.class);
                                     startActivity(intent);
@@ -108,8 +94,8 @@ public class ProfileFragment extends Fragment {
     public void onStart(){
         super.onStart();
 
-        Cursor cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
-        DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
+        Cursor cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+                        DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
                 DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",new String[]{HomeActivity.user},
                 null,null,null);
 
@@ -122,11 +108,5 @@ public class ProfileFragment extends Fragment {
         }
 
         cursor.close();
-    }
-
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        db.close();
     }
 }

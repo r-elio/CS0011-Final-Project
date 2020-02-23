@@ -1,28 +1,20 @@
 package android.application.meta;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
 public class EditProfileActivity extends AppCompatActivity {
-    private SQLiteDatabase db;
-    private Cursor cursor;
+    Cursor cursor;
 
     private TextInputLayout username;
     private TextInputLayout password;
@@ -44,26 +36,6 @@ public class EditProfileActivity extends AppCompatActivity {
 
         Button save;
 
-        SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
-        try {
-            db = databaseHelper.getReadableDatabase();
-        }
-        catch (SQLiteException e){
-            new AlertDialog.Builder(this)
-                    .setIcon(R.drawable.ic_error_outline_red_24dp)
-                    .setTitle(R.string.sql_exception)
-                    .setMessage(R.string.db_unavailable)
-                    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
-                    })
-                    .setCancelable(false)
-                    .create()
-                    .show();
-        }
-
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         confirm_pass = findViewById(R.id.confirm_pass);
@@ -82,7 +54,7 @@ public class EditProfileActivity extends AppCompatActivity {
         password.setErrorEnabled(true);
         confirm_pass.setErrorEnabled(true);
 
-        cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+        cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
                         DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
                 DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",new String[]{HomeActivity.user},
                 null,null,null);
@@ -170,11 +142,16 @@ public class EditProfileActivity extends AppCompatActivity {
                     return;
                 }
 
-                cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1]},
+                cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1]},
                         DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",
                         new String[]{userStr},null,null,null);
 
-                DatabaseHelper.updateAccount(db,HomeActivity.user,userStr,passStr,firstStr,lastStr);
+                if (cursor.moveToFirst() && !HomeActivity.user.equals(userStr)){
+                    username.setError(getResources().getString(R.string.user_taken));
+                    return;
+                }
+
+                DatabaseHelper.updateAccount(HomeActivity.db,HomeActivity.user,userStr,passStr,firstStr,lastStr);
                 HomeActivity.user = userStr;
                 finish();
             }
@@ -184,9 +161,6 @@ public class EditProfileActivity extends AppCompatActivity {
     @Override
     protected void onDestroy(){
         super.onDestroy();
-        if (cursor != null){
-            cursor.close();
-        }
-        db.close();
+        cursor.close();
     }
 }

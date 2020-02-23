@@ -10,16 +10,23 @@ import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
 public class HomeActivity extends AppCompatActivity {
+    public static SQLiteDatabase db;
+
     public static final String EXTRA_USER = "user";
     public static String user;
+
     ViewPager viewPager;
     FloatingActionButton fab;
 
@@ -27,6 +34,14 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        SQLiteOpenHelper databaseHelper = new DatabaseHelper(getApplicationContext());
+        try {
+            db = databaseHelper.getWritableDatabase();
+        }
+        catch (SQLiteException e){
+            Toast.makeText(this,R.string.db_unavailable,Toast.LENGTH_LONG).show();
+        }
 
         user = getIntent().getStringExtra(EXTRA_USER);
 
@@ -78,6 +93,12 @@ public class HomeActivity extends AppCompatActivity {
             @Override
             public void onPageScrollStateChanged(int state) { }
         });
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        db.close();
     }
 
     @Override

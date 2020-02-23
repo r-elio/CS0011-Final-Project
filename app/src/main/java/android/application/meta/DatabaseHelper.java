@@ -51,4 +51,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update("ACCOUNT",accountValues,
                 ACCOUNT_TABLE[1] + " = ?", new String[]{username});
     }
+
+    static void deleteAccount(SQLiteDatabase db, String username){
+        db.delete("ACCOUNT",DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",
+                new String[]{username});
+    }
 }

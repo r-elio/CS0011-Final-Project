@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Meta</string>
+    <string name="app_name">Delta</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="login">Login</string>
