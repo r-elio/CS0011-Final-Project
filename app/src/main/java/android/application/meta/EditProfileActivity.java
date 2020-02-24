@@ -56,7 +56,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
         cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
                         DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
-                DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",new String[]{HomeActivity.user},
+                DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",new String[]{HomeActivity.id},
                 null,null,null);
 
         if (cursor.moveToFirst()){
@@ -142,17 +142,16 @@ public class EditProfileActivity extends AppCompatActivity {
                     return;
                 }
 
-                cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1]},
+                cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[0]},
                         DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",
                         new String[]{userStr},null,null,null);
 
-                if (cursor.moveToFirst() && !HomeActivity.user.equals(userStr)){
+                if (cursor.moveToFirst() && !HomeActivity.id.equals(cursor.getString(0))){
                     username.setError(getResources().getString(R.string.user_taken));
                     return;
                 }
 
-                DatabaseHelper.updateAccount(HomeActivity.db,HomeActivity.user,userStr,passStr,firstStr,lastStr);
-                HomeActivity.user = userStr;
+                DatabaseHelper.updateAccount(HomeActivity.db,HomeActivity.id,userStr,passStr,firstStr,lastStr);
                 finish();
             }
         });

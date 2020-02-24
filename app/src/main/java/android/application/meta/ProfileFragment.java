@@ -67,7 +67,7 @@ public class ProfileFragment extends Fragment {
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                DatabaseHelper.deleteAccount(HomeActivity.db,HomeActivity.user);
+                                DatabaseHelper.deleteAccount(HomeActivity.db,HomeActivity.id);
                                 if (getActivity()!= null){
                                     Intent intent = new Intent(getActivity().getApplicationContext(),MainActivity.class);
                                     startActivity(intent);
@@ -95,7 +95,7 @@ public class ProfileFragment extends Fragment {
 
         Cursor cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
                         DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
-                DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",new String[]{HomeActivity.user},
+                DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",new String[]{HomeActivity.id},
                 null,null,null);
 
         if (cursor.moveToFirst()){

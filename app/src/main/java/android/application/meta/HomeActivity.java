@@ -24,8 +24,8 @@ import com.google.android.material.tabs.TabLayout;
 public class HomeActivity extends AppCompatActivity implements ActivityDialogFragment.EditTextListener {
     public static SQLiteDatabase db;
 
-    public static final String EXTRA_USER = "user";
-    public static String user;
+    public static final String EXTRA_ID = "id";
+    public static String id;
 
     ViewPager viewPager;
     FloatingActionButton fab;
@@ -43,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
             Toast.makeText(this,R.string.db_unavailable,Toast.LENGTH_LONG).show();
         }
 
-        user = getIntent().getStringExtra(EXTRA_USER);
+        id = getIntent().getStringExtra(EXTRA_ID);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -63,7 +63,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
             public void onClick(View v) {
                 if (viewPager.getCurrentItem() == 0){
                     Intent intent = new Intent(HomeActivity.this,EditProfileActivity.class);
-                    intent.putExtra(HomeActivity.EXTRA_USER,user);
+                    intent.putExtra(HomeActivity.EXTRA_ID, id);
                     startActivity(intent);
                 }
                 else if (viewPager.getCurrentItem() == 1){
@@ -76,6 +76,9 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) { }
+
+            @Override
+            public void onPageScrollStateChanged(int state) { }
 
             @Override
             public void onPageSelected(int position) {
@@ -93,9 +96,6 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
                         break;
                 }
             }
-
-            @Override
-            public void onPageScrollStateChanged(int state) { }
         });
     }
 
@@ -180,7 +180,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
 
     @Override
     public void onAdd(String name) {
-        DatabaseHelper.insertActivity(db,HomeActivity.user,name);
+        DatabaseHelper.insertActivity(db,HomeActivity.id,name);
         if (viewPager.getAdapter() != null){
             viewPager.getAdapter().notifyDataSetChanged();
         }

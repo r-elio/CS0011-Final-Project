@@ -10,7 +10,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
 
     static final String[] ACCOUNT_TABLE = {"_id","USERNAME","PASSWORD","FIRSTNAME","LASTNAME"};
-    static final String[] ACTIVITY_TABLE = {"_id","USERNAME","NAME"};
+    static final String[] ACTIVITY_TABLE = {"_id","ACCOUNTID","NAME"};
 
     DatabaseHelper(Context context){
         super(context,DATABASE_NAME,null,VERSION);
@@ -36,14 +36,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.execSQL("CREATE TABLE ACTIVITY (" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "USERNAME TEXT NOT NULL," +
+                "ACCOUNTID INTEGER NOT NULL," +
                 "NAME TEXT NOT NULL," +
-                "FOREIGN KEY(USERNAME) REFERENCES ACCOUNT(USERNAME) ON DELETE CASCADE);");
-        insertActivity(db,"r","Sleep");
-        insertActivity(db,"r","Awake");
-        insertActivity(db,"r","Study");
-        insertActivity(db,"r","Play");
-        insertActivity(db,"r","Outside");
+                "FOREIGN KEY(ACCOUNTID) REFERENCES ACCOUNT(_id) ON DELETE CASCADE);");
+        insertActivity(db,"1","Sleep");
+        insertActivity(db,"1","Awake");
+        insertActivity(db,"1","Study");
+        insertActivity(db,"1","Play");
+        insertActivity(db,"1","Outside");
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("ACCOUNT",null,accountValues);
     }
 
-    static void updateAccount(SQLiteDatabase db, String username, String...values){
+    static void updateAccount(SQLiteDatabase db, String id, String...values){
         ContentValues accountValues = new ContentValues();
         int i = 1;
         for (String value : values){
@@ -67,17 +67,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ++i;
         }
         db.update("ACCOUNT",accountValues,
-                ACCOUNT_TABLE[1] + " = ?", new String[]{username});
+                ACCOUNT_TABLE[0] + " = ?", new String[]{id});
     }
 
-    static void deleteAccount(SQLiteDatabase db, String username){
-        db.delete("ACCOUNT",ACCOUNT_TABLE[1] + " = ?",
-                new String[]{username});
+    static void deleteAccount(SQLiteDatabase db, String id){
+        db.delete("ACCOUNT",ACCOUNT_TABLE[0] + " = ?", new String[]{id});
     }
 
-    static void insertActivity(SQLiteDatabase db, String...values){
+    static void insertActivity(SQLiteDatabase db, String id, String...values){
         ContentValues activityValues = new ContentValues();
-        int i = 1;
+        activityValues.put(ACTIVITY_TABLE[1],Integer.valueOf(id));
+        int i = 2;
         for (String value : values){
             activityValues.put(ACTIVITY_TABLE[i],value);
             ++i;
@@ -85,19 +85,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert("ACTIVITY",null,activityValues);
     }
 
-    static void updateActivity(SQLiteDatabase db, String username, String...values){
+    static void updateActivity(SQLiteDatabase db, String id, String...values){
         ContentValues activityValues = new ContentValues();
-        int i = 1;
+        int i = 2;
         for (String value : values){
             activityValues.put(ACTIVITY_TABLE[i],value);
             ++i;
         }
         db.update("ACTIVITY",activityValues,
-                ACTIVITY_TABLE[1] + " = ?", new String[]{username});
+                ACTIVITY_TABLE[1] + " = ?", new String[]{id});
     }
 
-    static void deleteActivity(SQLiteDatabase db, String username, String name){
-        db.delete("ACTIVITY",ACTIVITY_TABLE[1] + " = ? AND " +
-                ACTIVITY_TABLE[2] + " = ?", new String[]{username,name});
+    static void deleteActivity(SQLiteDatabase db, String id, String name){
+        db.delete("ACTIVITY",ACTIVITY_TABLE[1] + " = ? AND " + ACTIVITY_TABLE[2] + " = ?", new String[]{id,name});
     }
 }

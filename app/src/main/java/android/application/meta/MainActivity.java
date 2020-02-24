@@ -15,7 +15,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -118,13 +117,14 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
 
-                cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],DatabaseHelper.ACCOUNT_TABLE[2]},
+                cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[0]},
                         DatabaseHelper.ACCOUNT_TABLE[1] + " = ? AND " + DatabaseHelper.ACCOUNT_TABLE[2] + " = ?",
                         new String[]{userStr,passStr},null,null,null);
 
                 if (cursor.moveToFirst()){
                     Intent intent = new Intent(MainActivity.this,HomeActivity.class);
-                    intent.putExtra(HomeActivity.EXTRA_USER,userStr);
+                    String id = String.valueOf(cursor.getInt(0));
+                    intent.putExtra(HomeActivity.EXTRA_ID,id);
                     startActivity(intent);
                     finish();
                 }

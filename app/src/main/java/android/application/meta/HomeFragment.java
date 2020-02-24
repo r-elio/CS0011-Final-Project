@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
         cursor = HomeActivity.db.query("ACTIVITY",
                 new String[]{DatabaseHelper.ACTIVITY_TABLE[0],DatabaseHelper.ACTIVITY_TABLE[2]},
                 DatabaseHelper.ACTIVITY_TABLE[1] + " = ?",
-                new String[]{HomeActivity.user},null,null,null);
+                new String[]{HomeActivity.id},null,null,null);
 
         SimpleCursorAdapter listAdapter = new SimpleCursorAdapter(getContext(),
                 android.R.layout.simple_list_item_1,cursor,
