@@ -15,9 +15,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ProfileFragment extends Fragment {
-    private TextView username;
-    private TextView firstname;
-    private TextView lastname;
     private TextView password;
     private ImageView visibility;
 
@@ -30,11 +27,13 @@ public class ProfileFragment extends Fragment {
 
         Button delete;
 
-        username = view.findViewById(R.id.username);
-        firstname = view.findViewById(R.id.firstname);
-        lastname = view.findViewById(R.id.lastname);
+        TextView username = view.findViewById(R.id.username);
+        TextView firstname = view.findViewById(R.id.firstname);
+        TextView lastname = view.findViewById(R.id.lastname);
+
         password = view.findViewById(R.id.password);
         visibility = view.findViewById(R.id.visibility);
+
         delete = view.findViewById(R.id.delete);
 
         Cursor cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],

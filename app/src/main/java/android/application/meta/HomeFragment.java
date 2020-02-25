@@ -36,13 +36,12 @@ public class HomeFragment extends Fragment implements
 
         activityNames = new ArrayList<>();
 
-        cursor.moveToFirst();
-
-        while (!cursor.isAfterLast()){
-            activityNames.add(cursor.getString(0));
-            cursor.moveToNext();
+        if (cursor.moveToFirst()){
+            while (!cursor.isAfterLast()){
+                activityNames.add(cursor.getString(0));
+                cursor.moveToNext();
+            }
         }
-
         cursor.close();
 
         RecyclerView recyclerView = view.findViewById(R.id.activity_list);
@@ -63,8 +62,9 @@ public class HomeFragment extends Fragment implements
     public void onItemClick(View view, int position) {
         Cursor Cursor = HomeActivity.db.query("Activity",
                 new String[]{DatabaseHelper.ACTIVITY_TABLE[0]},
+                DatabaseHelper.ACTIVITY_TABLE[1] + " = ? AND " +
                 DatabaseHelper.ACTIVITY_TABLE[2] + " = ?",
-                new String[]{adapter.getItem(position)},null,null,null);
+                new String[]{HomeActivity.id,adapter.getItem(position)},null,null,null);
 
         Cursor.moveToFirst();
 
@@ -106,7 +106,7 @@ public class HomeFragment extends Fragment implements
                 })
                 .create()
                 .show();
-        
+
         return true;
     }
 }

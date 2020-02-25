@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
         password = findViewById(R.id.password);
         userText = findViewById(R.id.userText);
         passText = findViewById(R.id.passText);
+
         login = findViewById(R.id.login);
         register = findViewById(R.id.button);
 

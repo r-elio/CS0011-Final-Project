@@ -170,7 +170,6 @@ public class HomeActivity extends AppCompatActivity implements
             case R.id.settings :
                 intent = new Intent(HomeActivity.this,SettingsActivity.class);
                 startActivity(intent);
-
                 break;
             case R.id.logout :
                 logoutConfirmation();

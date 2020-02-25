@@ -47,7 +47,8 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String name = v.toString();
+                        String name = activityText.getText().toString();
+
                         if (name.isEmpty()){
                             activityName.setError(getResources().getString(R.string.activity_error));
                             return;
@@ -58,15 +59,15 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
                                 DatabaseHelper.ACTIVITY_TABLE[1] + " = ?",
                                 new String[]{HomeActivity.id},null,null,null);
 
-                        cursor.moveToFirst();
-
-                        while (!cursor.isAfterLast()){
-                            if (name.equals(cursor.getString(0))){
-                                activityName.setError(getResources().getString(R.string.act_name_taken));
-                                return;
+                        if (cursor.moveToFirst()){
+                            while (!cursor.isAfterLast()){
+                                if (name.equals(cursor.getString(0))){
+                                    activityName.setError(getResources().getString(R.string.act_name_taken));
+                                    return;
+                                }
+                                cursor.moveToNext();
                             }
                         }
-
                         cursor.close();
 
                         listener.onAddActivity(name);

@@ -136,11 +136,12 @@ public class RegisterActivity extends AppCompatActivity {
                     password.setError(getResources().getString(R.string.pass_error));
                     isNullInput = true;
                 }
+
                 if (confirmStr.isEmpty()){
                     confirm_pass.setError(getResources().getString(R.string.confirm_error));
                     isNullInput = true;
                 }
-                if (!confirmStr.equals(passStr)){
+                else if (!confirmStr.equals(passStr)){
                     confirm_pass.setError(getResources().getString(R.string.pass_match_error));
                     isNullInput = true;
                 }

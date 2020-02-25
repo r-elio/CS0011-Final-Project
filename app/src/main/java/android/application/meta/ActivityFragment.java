@@ -34,13 +34,13 @@ public class ActivityFragment extends Fragment implements
 
         items = new ArrayList<>();
 
-        cursor.moveToFirst();
+        if (cursor.moveToFirst()){
+            while (!cursor.isAfterLast()){
+                items.add(cursor.getString(0));
+                cursor.moveToNext();
+            }
 
-        while (!cursor.isAfterLast()){
-            items.add(cursor.getString(0));
-            cursor.moveToNext();
         }
-
         cursor.close();
 
         RecyclerView recyclerView = view.findViewById(R.id.item_list);
