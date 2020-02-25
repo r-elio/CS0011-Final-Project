@@ -12,6 +12,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -140,6 +141,11 @@ public class HomeActivity extends AppCompatActivity implements
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        Cursor cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+                        DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
+                                new String[]{id},null,null,null);
+                        cursor.moveToFirst();
+                        DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
                         finish();
                     }
                 })
@@ -186,6 +192,7 @@ public class HomeActivity extends AppCompatActivity implements
                 .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        DatabaseHelper.recentLogin(db,"","");
                         Intent intent = new Intent(HomeActivity.this,MainActivity.class);
                         startActivity(intent);
                         finish();

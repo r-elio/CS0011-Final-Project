@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "db";
@@ -29,10 +30,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE ACCOUNT (" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "USERNAME TEXT UNIQUE NOT NULL," +
+                "USERNAME TEXT NOT NULL," +
                 "PASSWORD TEXT NOT NULL," +
                 "FIRSTNAME TEXT," +
                 "LASTNAME TEXT);");
+        insertAccount(db,"","");
         insertAccount(db,"r","e","Rajan","Elio");
 
         db.execSQL("CREATE TABLE ACTIVITY (" +
@@ -51,6 +53,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) { }
+
+    static void recentLogin(SQLiteDatabase db, String...values){
+        ContentValues recentValues = new ContentValues();
+        int i = 1;
+        for (String value : values){
+            recentValues.put(ACCOUNT_TABLE[i],value);
+            ++i;
+        }
+        db.update("ACCOUNT",recentValues,
+                ACCOUNT_TABLE[0] + " = ?",
+                new String[]{"1"});
+    }
 
     static void insertAccount(SQLiteDatabase db, String...values){
         ContentValues accountValues = new ContentValues();

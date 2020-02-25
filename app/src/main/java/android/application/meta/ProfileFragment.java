@@ -79,6 +79,7 @@ public class ProfileFragment extends Fragment {
                             public void onClick(DialogInterface dialog, int which) {
                                 DatabaseHelper.deleteAccount(HomeActivity.db,HomeActivity.id);
                                 if (getActivity()!= null){
+                                    DatabaseHelper.recentLogin(HomeActivity.db,"","");
                                     Intent intent = new Intent(getActivity().getApplicationContext(),MainActivity.class);
                                     startActivity(intent);
                                     getActivity().finish();

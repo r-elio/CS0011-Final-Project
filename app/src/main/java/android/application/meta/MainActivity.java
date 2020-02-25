@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -27,17 +28,18 @@ public class MainActivity extends AppCompatActivity {
     private TextInputEditText userText;
     private TextInputEditText passText;
 
+    private Button login;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Button login;
         TextView register;
 
         SQLiteOpenHelper databaseHelper = new DatabaseHelper(this);
         try {
-            db = databaseHelper.getReadableDatabase();
+            db = databaseHelper.getWritableDatabase();
         }
         catch (SQLiteException e){
             new AlertDialog.Builder(this)
@@ -110,7 +112,8 @@ public class MainActivity extends AppCompatActivity {
                 if (isNullInput) return;
 
                 cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[0]},
-                        DatabaseHelper.ACCOUNT_TABLE[1] + " = ? AND " + DatabaseHelper.ACCOUNT_TABLE[2] + " = ?",
+                        DatabaseHelper.ACCOUNT_TABLE[1] + " = ? AND " + DatabaseHelper.ACCOUNT_TABLE[2] + " = ? " +
+                                "AND " + DatabaseHelper.ACCOUNT_TABLE[3] + " IS NOT NULL",
                         new String[]{userStr,passStr},null,null,null);
 
                 if (cursor.moveToFirst()){
@@ -143,6 +146,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+                        DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
+                new String[]{"1"},null,null,null);
+
+        cursor.moveToFirst();
+        String user = cursor.getString(0);
+        String pass = cursor.getString(1);
+        if (!user.isEmpty() && !pass.isEmpty()) {
+            userText.setText(user);
+            passText.setText(pass);
+            login.performClick();
+        }
     }
 
     @Override
