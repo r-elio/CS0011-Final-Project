@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed(){
         new AlertDialog.Builder(this)
-                .setIcon(R.drawable.ic_error_outline_yellow_24dp)
+                .setIcon(R.drawable.ic_help_outline_blue_24dp)
                 .setTitle(R.string.exit)
                 .setMessage(R.string.exit_message)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {

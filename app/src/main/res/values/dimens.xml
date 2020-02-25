@@ -3,4 +3,6 @@
     <dimen name="button_padding">8dp</dimen>
     <dimen name="button_elevation">6dp</dimen>
     <dimen name="screen_padding">16dp</dimen>
+    <dimen name="toolbar_elevation">8dp</dimen>
+    <dimen name="font_list">16sp</dimen>
 </resources>

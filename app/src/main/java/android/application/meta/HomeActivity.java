@@ -27,7 +27,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
     public static final String EXTRA_ID = "id";
     public static String id;
 
-    ViewPager viewPager;
+    public static ViewPager viewPager;
     FloatingActionButton fab;
 
     @Override
@@ -68,6 +68,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
                 }
                 else if (viewPager.getCurrentItem() == 1){
                     ActivityDialogFragment dialog = new ActivityDialogFragment();
+                    dialog.setCancelable(false);
                     dialog.show(getSupportFragmentManager(),null);
                 }
             }
@@ -100,6 +101,14 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
     }
 
     @Override
+    public void onAdd(String name) {
+        DatabaseHelper.insertActivity(db,HomeActivity.id,name);
+        if (viewPager.getAdapter() != null){
+            viewPager.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
     protected void onDestroy(){
         super.onDestroy();
         db.close();
@@ -108,7 +117,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
     @Override
     public void onBackPressed(){
         new AlertDialog.Builder(this)
-                .setIcon(R.drawable.ic_error_outline_yellow_24dp)
+                .setIcon(R.drawable.ic_help_outline_blue_24dp)
                 .setTitle(R.string.exit)
                 .setMessage(R.string.exit_message)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
@@ -156,7 +165,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
 
     private void logoutConfirmation(){
         new AlertDialog.Builder(this)
-                .setIcon(R.drawable.ic_error_outline_yellow_24dp)
+                .setIcon(R.drawable.ic_help_outline_blue_24dp)
                 .setTitle(R.string.logout)
                 .setMessage(R.string.logout_message)
                 .setPositiveButton(R.string.yes,new DialogInterface.OnClickListener() {
@@ -176,14 +185,6 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
                 .setCancelable(false)
                 .create()
                 .show();
-    }
-
-    @Override
-    public void onAdd(String name) {
-        DatabaseHelper.insertActivity(db,HomeActivity.id,name);
-        if (viewPager.getAdapter() != null){
-            viewPager.getAdapter().notifyDataSetChanged();
-        }
     }
 
     private class SectionPageAdapter extends FragmentPagerAdapter {

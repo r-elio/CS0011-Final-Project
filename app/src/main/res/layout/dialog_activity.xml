@@ -7,9 +7,10 @@
     android:focusableInTouchMode="true">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/activity_name"
+        android:id="@+id/activity_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/button_padding">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/activity_text"
