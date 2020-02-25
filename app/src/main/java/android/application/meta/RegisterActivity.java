@@ -40,10 +40,9 @@ public class RegisterActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
         ActionBar actionBar = getSupportActionBar();
-        if (actionBar != null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-        }
+        if (actionBar != null) actionBar.setDisplayHomeAsUpEnabled(true);
 
         Button register;
 
@@ -62,7 +61,6 @@ public class RegisterActivity extends AppCompatActivity {
                             finish();
                         }
                     })
-                    .setCancelable(false)
                     .create()
                     .show();
         }
@@ -84,9 +82,7 @@ public class RegisterActivity extends AppCompatActivity {
         userText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (!v.getText().toString().isEmpty()){
-                    username.setError(null);
-                }
+                if (!v.getText().toString().isEmpty()) username.setError(null);
                 return false;
             }
         });
@@ -94,10 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
         passText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (!v.getText().toString().isEmpty()){
-                    password.setError(null);
-                }
-
+                if (!v.getText().toString().isEmpty()) password.setError(null);
                 return false;
             }
         });
@@ -111,10 +104,9 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 v.clearFocus();
+
                 InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null){
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
+                if (imm != null) imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 return false;
             }
@@ -123,12 +115,12 @@ public class RegisterActivity extends AppCompatActivity {
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                boolean isNullInput = false;
                 String userStr = "";
                 String passStr = "";
                 String confirmStr = "";
                 String firstStr = "";
                 String lastStr = "";
-                boolean isNullInput = false;
 
                 if (userText.getText() != null) userStr = userText.getText().toString();
                 if (passText.getText() != null) passStr = passText.getText().toString();
@@ -153,9 +145,7 @@ public class RegisterActivity extends AppCompatActivity {
                     isNullInput = true;
                 }
 
-                if (isNullInput){
-                    return;
-                }
+                if (isNullInput) return;
 
                 cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1]},
                         DatabaseHelper.ACCOUNT_TABLE[1] + " = ?",

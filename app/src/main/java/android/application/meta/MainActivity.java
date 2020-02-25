@@ -50,7 +50,6 @@ public class MainActivity extends AppCompatActivity {
                             finish();
                         }
                     })
-                    .setCancelable(false)
                     .create()
                     .show();
         }
@@ -68,10 +67,7 @@ public class MainActivity extends AppCompatActivity {
         userText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (userText.getText() != null && !userText.getText().toString().isEmpty()){
-                    username.setError(null);
-                }
-
+                if (!v.getText().toString().isEmpty()) username.setError(null);
                 return false;
             }
         });
@@ -79,15 +75,12 @@ public class MainActivity extends AppCompatActivity {
         passText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (passText.getText() != null && !passText.getText().toString().isEmpty()){
-                    password.setError(null);
-                }
+                if (!v.getText().toString().isEmpty()) password.setError(null);
 
                 passText.clearFocus();
+
                 InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null){
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
+                if (imm != null) imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 return false;
             }
@@ -113,9 +106,7 @@ public class MainActivity extends AppCompatActivity {
                     isNullInput = true;
                 }
 
-                if (isNullInput){
-                    return;
-                }
+                if (isNullInput) return;
 
                 cursor = db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[0]},
                         DatabaseHelper.ACCOUNT_TABLE[1] + " = ? AND " + DatabaseHelper.ACCOUNT_TABLE[2] + " = ?",
@@ -123,8 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
                 if (cursor.moveToFirst()){
                     Intent intent = new Intent(MainActivity.this,HomeActivity.class);
-                    String id = String.valueOf(cursor.getInt(0));
-                    intent.putExtra(HomeActivity.EXTRA_ID,id);
+                    intent.putExtra(HomeActivity.EXTRA_ID,cursor.getString(0));
                     startActivity(intent);
                     finish();
                 }
@@ -139,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
                                     dialog.cancel();
                                 }
                             })
-                            .setCancelable(false)
                             .create()
                             .show();
                 }
@@ -182,7 +171,6 @@ public class MainActivity extends AppCompatActivity {
                         dialog.cancel();
                     }
                 })
-                .setCancelable(false)
                 .create()
                 .show();
     }

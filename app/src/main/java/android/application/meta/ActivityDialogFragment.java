@@ -3,6 +3,7 @@ package android.application.meta;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -27,8 +28,12 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_activity,null);
-        final AlertDialog dialog = new AlertDialog.Builder(getContext())
-                .setCancelable(false)
+
+        activityName = view.findViewById(R.id.activity_layout);
+        activityText = view.findViewById(R.id.activity_text);
+        activityName.setErrorEnabled(true);
+
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setView(view)
                 .setTitle(R.string.create_activity)
                 .setPositiveButton(R.string.add,null)
@@ -42,35 +47,45 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String name = activityText.getText().toString();
+                        String name = v.toString();
                         if (name.isEmpty()){
                             activityName.setError(getResources().getString(R.string.activity_error));
                             return;
                         }
 
-                        listener.onAdd(name);
+                        Cursor cursor = HomeActivity.db.query("ACTIVITY",
+                                new String[]{DatabaseHelper.ACTIVITY_TABLE[2]},
+                                DatabaseHelper.ACTIVITY_TABLE[1] + " = ?",
+                                new String[]{HomeActivity.id},null,null,null);
+
+                        cursor.moveToFirst();
+
+                        while (!cursor.isAfterLast()){
+                            if (name.equals(cursor.getString(0))){
+                                activityName.setError(getResources().getString(R.string.act_name_taken));
+                                return;
+                            }
+                        }
+
+                        cursor.close();
+
+                        listener.onAddActivity(name);
+
                         dialog.dismiss();
                     }
                 });
             }
         });
 
-        activityName = view.findViewById(R.id.activity_layout);
-        activityText = view.findViewById(R.id.activity_text);
-        activityName.setErrorEnabled(true);
-
         activityText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (!activityText.getText().toString().isEmpty()){
-                    activityName.setError(null);
-                }
+                if (!v.getText().toString().isEmpty()) activityName.setError(null);
 
                 activityText.clearFocus();
+
                 InputMethodManager imm = (InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null){
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
-                }
+                if (imm != null) imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
                 return false;
             }
@@ -82,6 +97,7 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
+
         try {
             listener = (EditTextListener) context;
         } catch (ClassCastException e) {
@@ -91,6 +107,6 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
     }
 
     public interface EditTextListener {
-        void onAdd(String name);
+        void onAddActivity(String name);
     }
 }

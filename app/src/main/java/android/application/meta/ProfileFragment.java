@@ -21,15 +21,12 @@ public class ProfileFragment extends Fragment {
     private TextView password;
     private ImageView visibility;
 
-    public ProfileFragment() {
-        // Required empty public constructor
-    }
+    public ProfileFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        final View view =  inflater.inflate(R.layout.fragment_profile, container, false);
+        View view =  inflater.inflate(R.layout.fragment_profile, container, false);
 
         Button delete;
 
@@ -39,6 +36,21 @@ public class ProfileFragment extends Fragment {
         password = view.findViewById(R.id.password);
         visibility = view.findViewById(R.id.visibility);
         delete = view.findViewById(R.id.delete);
+
+        Cursor cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+                        DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
+                DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",new String[]{HomeActivity.id},
+                null,null,null);
+
+        if (cursor.moveToFirst()){
+            username.setText(cursor.getString(0));
+            password.setText(cursor.getString(1));
+            firstname.setText(cursor.getString(2));
+            lastname.setText(cursor.getString(3));
+            password.setTransformationMethod(new PasswordTransformationMethod());
+        }
+
+        cursor.close();
 
         visibility.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +75,6 @@ public class ProfileFragment extends Fragment {
                         .setIcon(R.drawable.ic_error_outline_red_24dp)
                         .setTitle(R.string.delete_account)
                         .setMessage(R.string.delete_message)
-                        .setCancelable(false)
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -87,25 +98,5 @@ public class ProfileFragment extends Fragment {
         });
 
         return view;
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-
-        Cursor cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
-                        DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
-                DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",new String[]{HomeActivity.id},
-                null,null,null);
-
-        if (cursor.moveToFirst()){
-            username.setText(cursor.getString(0));
-            password.setText(cursor.getString(1));
-            firstname.setText(cursor.getString(2));
-            lastname.setText(cursor.getString(3));
-            password.setTransformationMethod(new PasswordTransformationMethod());
-        }
-
-        cursor.close();
     }
 }

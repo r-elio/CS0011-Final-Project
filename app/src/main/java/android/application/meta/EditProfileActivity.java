@@ -55,7 +55,8 @@ public class EditProfileActivity extends AppCompatActivity {
         confirm_pass.setErrorEnabled(true);
 
         cursor = HomeActivity.db.query("ACCOUNT",new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
-                        DatabaseHelper.ACCOUNT_TABLE[2],DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
+                        DatabaseHelper.ACCOUNT_TABLE[2],
+                        DatabaseHelper.ACCOUNT_TABLE[3],DatabaseHelper.ACCOUNT_TABLE[4]},
                 DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",new String[]{HomeActivity.id},
                 null,null,null);
 
@@ -152,6 +153,10 @@ public class EditProfileActivity extends AppCompatActivity {
                 }
 
                 DatabaseHelper.updateAccount(HomeActivity.db,HomeActivity.id,userStr,passStr,firstStr,lastStr);
+
+                if (HomeActivity.viewPager.getAdapter() != null)
+                    HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
+
                 finish();
             }
         });
