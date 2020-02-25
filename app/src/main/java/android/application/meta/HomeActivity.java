@@ -4,10 +4,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,17 +19,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TimePicker;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
 
-public class HomeActivity extends AppCompatActivity implements ActivityDialogFragment.EditTextListener {
-    public static SQLiteDatabase db;
+public class HomeActivity extends AppCompatActivity implements
+        ActivityDialogFragment.EditTextListener,
+        TimePickerDialog.OnTimeSetListener {
 
     public static final String EXTRA_ID = "id";
+    public static SQLiteDatabase db;
     public static String id;
-
     public static ViewPager viewPager;
+
     FloatingActionButton fab;
 
     @Override
@@ -49,6 +54,7 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
         setSupportActionBar(toolbar);
 
         SectionPageAdapter pagerAdapter = new SectionPageAdapter(getSupportFragmentManager(),FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+
         viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(pagerAdapter);
         viewPager.setCurrentItem(1);
@@ -68,8 +74,11 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
                 }
                 else if (viewPager.getCurrentItem() == 1){
                     ActivityDialogFragment dialog = new ActivityDialogFragment();
-                    dialog.setCancelable(false);
                     dialog.show(getSupportFragmentManager(),null);
+                }
+                else if (viewPager.getCurrentItem() == 2){
+                    DialogFragment timePicker = new TimePickerFragment();
+                    timePicker.show(getSupportFragmentManager(),null);
                 }
             }
         });
@@ -101,8 +110,16 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
     }
 
     @Override
-    public void onAdd(String name) {
+    public void onAddActivity(String name) {
         DatabaseHelper.insertActivity(db,HomeActivity.id,name);
+        if (viewPager.getAdapter() != null){
+            viewPager.getAdapter().notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        DatabaseHelper.insertItem(db,HomeFragment.activityId,hourOfDay + ":" + minute);
         if (viewPager.getAdapter() != null){
             viewPager.getAdapter().notifyDataSetChanged();
         }
@@ -132,7 +149,6 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
                         dialog.cancel();
                     }
                 })
-                .setCancelable(false)
                 .create()
                 .show();
     }
@@ -182,7 +198,6 @@ public class HomeActivity extends AppCompatActivity implements ActivityDialogFra
                         dialog.cancel();
                     }
                 })
-                .setCancelable(false)
                 .create()
                 .show();
     }

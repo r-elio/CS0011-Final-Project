@@ -11,14 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 import java.util.ArrayList;
 
 public class HomeFragment extends Fragment implements
-        ActivityListAdapter.ItemClickListener, ActivityListAdapter.ItemLongClickListener {
-    private Cursor cursor;
-    private RecyclerView recyclerView;
-    private LinearLayoutManager layoutManager;
+        ActivityListAdapter.ItemClickListener,
+        ActivityListAdapter.ItemLongClickListener {
+
+    static String activityId = "-1";
+
     private ArrayList<String> activityNames;
     private ActivityListAdapter adapter;
 
@@ -29,20 +29,24 @@ public class HomeFragment extends Fragment implements
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        cursor = HomeActivity.db.query("ACTIVITY",
+        Cursor cursor = HomeActivity.db.query("ACTIVITY",
                 new String[]{DatabaseHelper.ACTIVITY_TABLE[2]},
                 DatabaseHelper.ACTIVITY_TABLE[1] + " = ?",
                 new String[]{HomeActivity.id},null,null,null);
 
         activityNames = new ArrayList<>();
+
         cursor.moveToFirst();
+
         while (!cursor.isAfterLast()){
             activityNames.add(cursor.getString(0));
             cursor.moveToNext();
         }
 
-        recyclerView = view.findViewById(R.id.activity_list);
-        layoutManager = new LinearLayoutManager(getContext());
+        cursor.close();
+
+        RecyclerView recyclerView = view.findViewById(R.id.activity_list);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new ActivityListAdapter(getContext(),activityNames);
         adapter.setClickListener(this);
@@ -56,15 +60,22 @@ public class HomeFragment extends Fragment implements
     }
 
     @Override
-    public void onDestroy(){
-        super.onDestroy();
-        cursor.close();
-    }
-
-    @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(getContext(),"Click: " + adapter.getItem(position),Toast.LENGTH_SHORT).show();
-        HomeActivity.viewPager.arrowScroll(View.FOCUS_RIGHT);
+        Cursor Cursor = HomeActivity.db.query("Activity",
+                new String[]{DatabaseHelper.ACTIVITY_TABLE[0]},
+                DatabaseHelper.ACTIVITY_TABLE[2] + " = ?",
+                new String[]{adapter.getItem(position)},null,null,null);
+
+        Cursor.moveToFirst();
+
+        activityId = Cursor.getString(0);
+
+        if (HomeActivity.viewPager.getAdapter() != null){
+            HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
+            HomeActivity.viewPager.arrowScroll(View.FOCUS_RIGHT);
+        }
+
+        Cursor.close();
     }
 
     @Override
@@ -79,6 +90,12 @@ public class HomeFragment extends Fragment implements
                         DatabaseHelper.deleteActivity(HomeActivity.db,HomeActivity.id,adapter.getItem(position));
                         activityNames.remove(position);
                         adapter.notifyItemRemoved(position);
+
+                        if (String.valueOf(position).equals(activityId))
+                            activityId = "-1";
+
+                        if (HomeActivity.viewPager.getAdapter() != null)
+                            HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -89,6 +106,7 @@ public class HomeFragment extends Fragment implements
                 })
                 .create()
                 .show();
+        
         return true;
     }
 }

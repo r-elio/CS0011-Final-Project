@@ -11,6 +11,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     static final String[] ACCOUNT_TABLE = {"_id","USERNAME","PASSWORD","FIRSTNAME","LASTNAME"};
     static final String[] ACTIVITY_TABLE = {"_id","ACCOUNTID","NAME"};
+    static final String[] ITEM_TABLE = {"_id","ACTIVITYID","STARTDATETIME","ENDDATETIME"};
 
     DatabaseHelper(Context context){
         super(context,DATABASE_NAME,null,VERSION);
@@ -39,11 +40,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "ACCOUNTID INTEGER NOT NULL," +
                 "NAME TEXT NOT NULL," +
                 "FOREIGN KEY(ACCOUNTID) REFERENCES ACCOUNT(_id) ON DELETE CASCADE);");
-        insertActivity(db,"1","Sleep");
-        insertActivity(db,"1","Awake");
-        insertActivity(db,"1","Study");
-        insertActivity(db,"1","Play");
-        insertActivity(db,"1","Outside");
+
+        db.execSQL("CREATE TABLE ITEM (" +
+                "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "ACTIVITYID INTEGER NOT NULL," +
+                "STARTDATETIME TEXT NOT NULL," +
+                "ENDDATETIME TEXT," +
+                "FOREIGN KEY(ACTIVITYID) REFERENCES ACTIVITY(_id) ON DELETE CASCADE);");
     }
 
     @Override
@@ -93,10 +96,37 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ++i;
         }
         db.update("ACTIVITY",activityValues,
-                ACTIVITY_TABLE[1] + " = ?", new String[]{id});
+                ACTIVITY_TABLE[0] + " = ?", new String[]{id});
     }
 
     static void deleteActivity(SQLiteDatabase db, String id, String name){
-        db.delete("ACTIVITY",ACTIVITY_TABLE[1] + " = ? AND " + ACTIVITY_TABLE[2] + " = ?", new String[]{id,name});
+        db.delete("ACTIVITY",ACTIVITY_TABLE[1] + " = ? AND " +
+                ACTIVITY_TABLE[2] + " = ?", new String[]{id,name});
+    }
+
+    static void insertItem(SQLiteDatabase db, String id, String...values){
+        ContentValues itemValues = new ContentValues();
+        itemValues.put(ITEM_TABLE[1],Integer.valueOf(id));
+        int i = 2;
+        for (String value : values){
+            itemValues.put(ITEM_TABLE[i],value);
+            ++i;
+        }
+        db.insert("ITEM",null,itemValues);
+    }
+
+    static void updateItem(SQLiteDatabase db, String id, String...values){
+        ContentValues itemValues = new ContentValues();
+        int i = 2;
+        for (String value : values){
+            itemValues.put(ITEM_TABLE[i],value);
+            ++i;
+        }
+        db.update("ITEM", itemValues,
+                ITEM_TABLE[0] + " = ?", new String[]{id});
+    }
+
+    static void deleteItem(SQLiteDatabase db, String id){
+        db.delete("ITEM", ITEM_TABLE[0] + " = ?", new String[]{id});
     }
 }
