@@ -49,6 +49,6 @@
     <string name="delete_activity">Delete Activity</string>
     <string name="del_act_message">Do you want to delete the activity</string>
     <string name="delete_item">Delete Item</string>
-    <string name="del_item_message">Do you want to delete the time</string>
+    <string name="del_item_message">Do you want to delete the item?</string>
     <string name="act_name_taken">Activity name is already taken</string>
 </resources>

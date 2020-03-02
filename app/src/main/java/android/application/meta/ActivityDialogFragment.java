@@ -61,7 +61,7 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
 
                         if (cursor.moveToFirst()){
                             while (!cursor.isAfterLast()){
-                                if (name.equals(cursor.getString(0))){
+                                if (name.equalsIgnoreCase(cursor.getString(0))){
                                     activityName.setError(getResources().getString(R.string.act_name_taken));
                                     return;
                                 }

@@ -75,6 +75,8 @@ public class HomeFragment extends Fragment implements
             HomeActivity.viewPager.arrowScroll(View.FOCUS_RIGHT);
         }
 
+        ActivityListAdapter.selectedPosition = position;
+
         Cursor.close();
     }
 

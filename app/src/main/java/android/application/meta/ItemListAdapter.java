@@ -9,72 +9,61 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
-public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapter.ViewHolder> {
-    private List<String> mData;
+public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
+
     private LayoutInflater mInflater;
+    private List<DateTimeItem> dateTimeItems;
+
     private ItemClickListener itemClickListener;
     private ItemLongClickListener itemLongClickListener;
 
-    static int selectedPosition = -1;
-
-    ActivityListAdapter(Context context, List<String> data){
+    ItemListAdapter(Context context, List<DateTimeItem> dateTimeItems){
         this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
+        this.dateTimeItems = dateTimeItems;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = mInflater.inflate(R.layout.activitylist_row, parent, false);
+        View view = mInflater.inflate(R.layout.itemlist_row, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String activity = mData.get(position);
-        holder.textView.setText(activity);
-        if (selectedPosition == position){
-            holder.itemView.setBackgroundResource(R.color.colorPrimary);
-        }
-        else {
-            holder.itemView.setBackgroundResource(R.color.windowBackground);
-        }
+        String startStr = dateTimeItems.get(position).getStartDateTime();
+        String endStr = dateTimeItems.get(position).getEndDateTime();
+        holder.startTime.setText(startStr);
+        holder.endTime.setText(endStr);
     }
 
     @Override
-    public int getItemCount() {
-        return mData.size();
-    }
-
-    String getItem(int id){
-        return mData.get(id);
-    }
+    public int getItemCount() { return dateTimeItems.size(); }
 
     public class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
-
-        TextView textView;
+        private TextView startTime;
+        private TextView endTime;
 
         ViewHolder(View itemView){
             super(itemView);
-            textView = itemView.findViewById(R.id.activity_name);
+            startTime = itemView.findViewById(R.id.startTime);
+            endTime = itemView.findViewById(R.id.endTime);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
         }
 
         @Override
-        public void onClick(View view) {
-            if (itemClickListener != null) {
-                itemClickListener.onItemClick(view, getAdapterPosition());
-                notifyDataSetChanged();
-            }
+        public void onClick(View v) {
+            if (itemClickListener != null)
+                itemClickListener.onItemClick(v, getAdapterPosition());
         }
 
         @Override
-        public boolean onLongClick(View view) {
+        public boolean onLongClick(View v) {
             if (itemLongClickListener != null)
-                return itemLongClickListener.onItemLongClick(view, getAdapterPosition());
+                return itemLongClickListener.onItemLongClick(v, getAdapterPosition());
             else
                 return false;
         }

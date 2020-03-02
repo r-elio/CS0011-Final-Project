@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
+
+import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,19 +22,26 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
+import java.text.DateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class HomeActivity extends AppCompatActivity implements
         ActivityDialogFragment.EditTextListener,
-        TimePickerDialog.OnTimeSetListener {
+        TimePickerDialog.OnTimeSetListener,
+        DatePickerDialog.OnDateSetListener {
 
     public static final String EXTRA_ID = "id";
     public static SQLiteDatabase db;
     public static String id;
     public static ViewPager viewPager;
+
+    Calendar calendar = Calendar.getInstance();
 
     FloatingActionButton fab;
 
@@ -78,8 +87,8 @@ public class HomeActivity extends AppCompatActivity implements
                     dialog.show(getSupportFragmentManager(),null);
                 }
                 else if (viewPager.getCurrentItem() == 2){
-                    DialogFragment timePicker = new TimePickerFragment();
-                    timePicker.show(getSupportFragmentManager(),null);
+                    DialogFragment datePicker = new DatePickerFragment();
+                    datePicker.show(getSupportFragmentManager(),null);
                 }
             }
         });
@@ -112,15 +121,29 @@ public class HomeActivity extends AppCompatActivity implements
 
     @Override
     public void onAddActivity(String name) {
-        DatabaseHelper.insertActivity(db,HomeActivity.id,name);
+        DatabaseHelper.insertActivity(db,HomeActivity.id,name.toLowerCase());
         if (viewPager.getAdapter() != null){
             viewPager.getAdapter().notifyDataSetChanged();
         }
     }
 
     @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        calendar.set(Calendar.YEAR,year);
+        calendar.set(Calendar.MONTH,month);
+        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+
+        DialogFragment timePicker = new TimePickerFragment();
+        timePicker.show(getSupportFragmentManager(),null);
+    }
+
+    @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        DatabaseHelper.insertItem(db,HomeFragment.activityId,hourOfDay + ":" + minute);
+        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        calendar.set(Calendar.MINUTE, minute);
+        calendar.set(Calendar.SECOND,0);
+
+        DatabaseHelper.insertItem(db,HomeFragment.activityId, DateFormat.getDateTimeInstance().format(calendar.getTime()).toLowerCase());
         if (viewPager.getAdapter() != null){
             viewPager.getAdapter().notifyDataSetChanged();
         }
@@ -146,6 +169,7 @@ public class HomeActivity extends AppCompatActivity implements
                                 new String[]{id},null,null,null);
                         cursor.moveToFirst();
                         DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
+                        cursor.close();
                         finish();
                     }
                 })

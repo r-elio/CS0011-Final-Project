@@ -13,12 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import java.util.ArrayList;
 
-public class ActivityFragment extends Fragment implements
-        ActivityListAdapter.ItemClickListener,
-        ActivityListAdapter.ItemLongClickListener {
+public class ActivityFragment extends Fragment
+        implements ItemListAdapter.ItemClickListener, ItemListAdapter.ItemLongClickListener {
 
-    private ArrayList<String> items;
-    private ActivityListAdapter adapter;
+    private ArrayList<DateTimeItem> dateTimeItems;
+    private ItemListAdapter adapter;
 
     public ActivityFragment() { }
 
@@ -28,25 +27,24 @@ public class ActivityFragment extends Fragment implements
         View view = inflater.inflate(R.layout.fragment_activity,container,false);
 
         Cursor cursor = HomeActivity.db.query("ITEM",
-                new String[]{DatabaseHelper.ITEM_TABLE[2]},
+                new String[]{DatabaseHelper.ITEM_TABLE[2],DatabaseHelper.ITEM_TABLE[3]},
                 DatabaseHelper.ITEM_TABLE[1] + " = ?",
                 new String[]{HomeFragment.activityId},null,null,null);
 
-        items = new ArrayList<>();
+        dateTimeItems = new ArrayList<>();
 
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast()){
-                items.add(cursor.getString(0));
+                dateTimeItems.add(new DateTimeItem(cursor.getString(0), cursor.getString(1)));
                 cursor.moveToNext();
             }
-
         }
         cursor.close();
 
         RecyclerView recyclerView = view.findViewById(R.id.item_list);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        adapter = new ActivityListAdapter(getContext(),items);
+        adapter = new ItemListAdapter(getContext(),dateTimeItems);
         adapter.setClickListener(this);
         adapter.setLongClickListener(this);
         recyclerView.setAdapter(adapter);
@@ -59,7 +57,7 @@ public class ActivityFragment extends Fragment implements
 
     @Override
     public void onItemClick(View view, int position) {
-        // Update item
+        // Update Feature
     }
 
     @Override
@@ -67,8 +65,7 @@ public class ActivityFragment extends Fragment implements
         new AlertDialog.Builder(getContext())
                 .setIcon(R.drawable.ic_error_outline_red_24dp)
                 .setTitle(R.string.delete_item)
-                .setMessage(getResources().getString(R.string.del_item_message)
-                        + " \"" + adapter.getItem(position) + "\"?")
+                .setMessage(R.string.del_item_message)
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -77,11 +74,9 @@ public class ActivityFragment extends Fragment implements
                                 null,null,null);
 
                         cursor.moveToFirst();
-
                         DatabaseHelper.deleteItem(HomeActivity.db,cursor.getString(0));
-                        items.remove(position);
+                        dateTimeItems.remove(position);
                         adapter.notifyItemRemoved(position);
-
                         cursor.close();
                     }
                 })
@@ -93,6 +88,7 @@ public class ActivityFragment extends Fragment implements
                 })
                 .create()
                 .show();
+
         return true;
     }
 }
