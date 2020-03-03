@@ -10,16 +10,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.List;
 
 public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapter.ViewHolder> {
-    private List<String> mData;
+
     private LayoutInflater mInflater;
+    private List<ActivityItem> activityItems;
+
     private ItemClickListener itemClickListener;
     private ItemLongClickListener itemLongClickListener;
 
     static int selectedPosition = -1;
 
-    ActivityListAdapter(Context context, List<String> data){
+    ActivityListAdapter(Context context, List<ActivityItem> activityItems){
         this.mInflater = LayoutInflater.from(context);
-        this.mData = data;
+        this.activityItems = activityItems;
     }
 
     @NonNull
@@ -31,7 +33,7 @@ public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String activity = mData.get(position);
+        String activity = activityItems.get(position).getName();
         holder.textView.setText(activity);
         if (selectedPosition == position){
             holder.itemView.setBackgroundResource(R.color.colorPrimary);
@@ -43,11 +45,11 @@ public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapte
 
     @Override
     public int getItemCount() {
-        return mData.size();
+        return activityItems.size();
     }
 
-    String getItem(int id){
-        return mData.get(id);
+    ActivityItem getItem(int id){
+        return activityItems.get(id);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder

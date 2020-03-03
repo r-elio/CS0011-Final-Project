@@ -4,7 +4,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
@@ -27,21 +26,16 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.tabs.TabLayout;
-import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
-public class HomeActivity extends AppCompatActivity implements
-        ActivityDialogFragment.EditTextListener,
-        TimePickerDialog.OnTimeSetListener,
-        DatePickerDialog.OnDateSetListener {
+import java.util.Calendar;
+
+public class HomeActivity extends AppCompatActivity
+        implements ActivityDialogFragment.EditTextListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     public static final String EXTRA_ID = "id";
     public static SQLiteDatabase db;
     public static String id;
     public static ViewPager viewPager;
-
-    Calendar calendar = Calendar.getInstance();
 
     FloatingActionButton fab;
 
@@ -87,8 +81,7 @@ public class HomeActivity extends AppCompatActivity implements
                     dialog.show(getSupportFragmentManager(),null);
                 }
                 else if (viewPager.getCurrentItem() == 2){
-                    DialogFragment datePicker = new DatePickerFragment();
-                    datePicker.show(getSupportFragmentManager(),null);
+                    showDatePickerDialog();
                 }
             }
         });
@@ -107,9 +100,18 @@ public class HomeActivity extends AppCompatActivity implements
                         fab.setImageResource(R.drawable.ic_edit_black_24dp);
                         fab.show();
                         break;
-                    case 1: case 2:
+                    case 1:
                         fab.setImageResource(R.drawable.ic_add_black_24dp);
                         fab.show();
+                        break;
+                    case 2:
+                        if (HomeFragment.activityId.equals("-1")){
+                            fab.hide();
+                        }
+                        else {
+                            fab.setImageResource(R.drawable.ic_add_black_24dp);
+                            fab.show();
+                        }
                         break;
                     default:
                         fab.hide();
@@ -119,31 +121,39 @@ public class HomeActivity extends AppCompatActivity implements
         });
     }
 
-    @Override
-    public void onAddActivity(String name) {
-        DatabaseHelper.insertActivity(db,HomeActivity.id,name.toLowerCase());
-        if (viewPager.getAdapter() != null){
-            viewPager.getAdapter().notifyDataSetChanged();
-        }
+    private void showDatePickerDialog(){
+        new DatePickerDialog(
+                HomeActivity.this,
+                this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+                .show();
     }
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-        calendar.set(Calendar.YEAR,year);
-        calendar.set(Calendar.MONTH,month);
-        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+        showTimePickerDialog();
+    }
 
-        DialogFragment timePicker = new TimePickerFragment();
-        timePicker.show(getSupportFragmentManager(),null);
+    private void showTimePickerDialog(){
+        new TimePickerDialog(
+                HomeActivity.this,
+                this,
+                Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+                Calendar.getInstance().get(Calendar.MINUTE),
+                false)
+                .show();
     }
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        calendar.set(Calendar.MINUTE, minute);
-        calendar.set(Calendar.SECOND,0);
 
-        DatabaseHelper.insertItem(db,HomeFragment.activityId, DateFormat.getDateTimeInstance().format(calendar.getTime()).toLowerCase());
+    }
+
+    @Override
+    public void onAddActivity(String name) {
+        DatabaseHelper.insertActivity(db,HomeActivity.id,name);
         if (viewPager.getAdapter() != null){
             viewPager.getAdapter().notifyDataSetChanged();
         }
@@ -157,30 +167,40 @@ public class HomeActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed(){
-        new AlertDialog.Builder(this)
-                .setIcon(R.drawable.ic_help_outline_blue_24dp)
-                .setTitle(R.string.exit)
-                .setMessage(R.string.exit_message)
-                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Cursor cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
-                        DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
-                                new String[]{id},null,null,null);
-                        cursor.moveToFirst();
-                        DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
-                        cursor.close();
-                        finish();
-                    }
-                })
-                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .create()
-                .show();
+        if (ActivityListAdapter.selectedPosition != -1 &&
+            viewPager.getCurrentItem() == 1){
+            ActivityListAdapter.selectedPosition = -1;
+            HomeFragment.activityId = "-1";
+
+            if (viewPager.getAdapter() != null)
+                viewPager.getAdapter().notifyDataSetChanged();
+        }
+        else {
+            new AlertDialog.Builder(this)
+                    .setIcon(R.drawable.ic_help_outline_blue_24dp)
+                    .setTitle(R.string.exit)
+                    .setMessage(R.string.exit_message)
+                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Cursor cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+                                            DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
+                                    new String[]{id},null,null,null);
+                            cursor.moveToFirst();
+                            DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
+                            cursor.close();
+                            finish();
+                        }
+                    })
+                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    })
+                    .create()
+                    .show();
+        }
     }
 
     @Override

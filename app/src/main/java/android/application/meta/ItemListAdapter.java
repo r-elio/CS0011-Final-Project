@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import java.text.ParseException;
 import java.util.List;
 
 public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHolder> {
@@ -31,14 +32,20 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        String startStr = dateTimeItems.get(position).getStartDateTime();
-        String endStr = dateTimeItems.get(position).getEndDateTime();
-        holder.startTime.setText(startStr);
-        holder.endTime.setText(endStr);
+        try {
+            String startStr = dateTimeItems.get(position).getStartTime();
+            String endStr = dateTimeItems.get(position).getEndTime();
+            holder.startTime.setText(startStr);
+            holder.endTime.setText(endStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public int getItemCount() { return dateTimeItems.size(); }
+
+    DateTimeItem getItem(int id) { return dateTimeItems.get(id); }
 
     public class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {

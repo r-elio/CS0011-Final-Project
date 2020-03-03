@@ -1,6 +1,8 @@
 package android.application.meta;
 
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -11,10 +13,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 import java.util.ArrayList;
+import java.util.Calendar;
 
-public class ActivityFragment extends Fragment
-        implements ItemListAdapter.ItemClickListener, ItemListAdapter.ItemLongClickListener {
+public class ActivityFragment extends Fragment implements
+        ItemListAdapter.ItemClickListener,
+        ItemListAdapter.ItemLongClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
 
     private ArrayList<DateTimeItem> dateTimeItems;
     private ItemListAdapter adapter;
@@ -27,7 +33,10 @@ public class ActivityFragment extends Fragment
         View view = inflater.inflate(R.layout.fragment_activity,container,false);
 
         Cursor cursor = HomeActivity.db.query("ITEM",
-                new String[]{DatabaseHelper.ITEM_TABLE[2],DatabaseHelper.ITEM_TABLE[3]},
+                new String[]{
+                        DatabaseHelper.ITEM_TABLE[0],
+                        DatabaseHelper.ITEM_TABLE[2],
+                        DatabaseHelper.ITEM_TABLE[3]},
                 DatabaseHelper.ITEM_TABLE[1] + " = ?",
                 new String[]{HomeFragment.activityId},null,null,null);
 
@@ -35,7 +44,10 @@ public class ActivityFragment extends Fragment
 
         if (cursor.moveToFirst()){
             while (!cursor.isAfterLast()){
-                dateTimeItems.add(new DateTimeItem(cursor.getString(0), cursor.getString(1)));
+                dateTimeItems.add(new DateTimeItem(
+                        cursor.getString(0),
+                        cursor.getString(1),
+                        cursor.getString(2)));
                 cursor.moveToNext();
             }
         }
@@ -57,7 +69,9 @@ public class ActivityFragment extends Fragment
 
     @Override
     public void onItemClick(View view, int position) {
-        // Update Feature
+        if (adapter.getItem(position).getEndDateTime() == null){
+            showDatePickerDialog();
+        }
     }
 
     @Override
@@ -69,15 +83,9 @@ public class ActivityFragment extends Fragment
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Cursor cursor = HomeActivity.db.query("ITEM",new String[]{DatabaseHelper.ITEM_TABLE[0]},
-                                DatabaseHelper.ITEM_TABLE[1] + " = ?",new String[]{HomeFragment.activityId},
-                                null,null,null);
-
-                        cursor.moveToFirst();
-                        DatabaseHelper.deleteItem(HomeActivity.db,cursor.getString(0));
+                        DatabaseHelper.deleteItem(HomeActivity.db,adapter.getItem(position).getId());
                         dateTimeItems.remove(position);
                         adapter.notifyItemRemoved(position);
-                        cursor.close();
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -90,5 +98,36 @@ public class ActivityFragment extends Fragment
                 .show();
 
         return true;
+    }
+
+    private void showDatePickerDialog(){
+        if (getContext() == null) return;
+        new DatePickerDialog(
+                getContext(),
+                this,
+                Calendar.getInstance().get(Calendar.YEAR),
+                Calendar.getInstance().get(Calendar.MONTH),
+                Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+                .show();
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        showTimePickerDialog();
+    }
+
+    private void showTimePickerDialog(){
+        new TimePickerDialog(
+                getContext(),
+                this,
+                Calendar.getInstance().get(Calendar.HOUR_OF_DAY),
+                Calendar.getInstance().get(Calendar.MINUTE),
+                false)
+                .show();
+    }
+
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        System.out.println("TIME");
     }
 }

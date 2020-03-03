@@ -47,7 +47,7 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        String name = activityText.getText().toString();
+                        String name = activityText.getText().toString().toLowerCase();
 
                         if (name.isEmpty()){
                             activityName.setError(getResources().getString(R.string.activity_error));
@@ -61,7 +61,7 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
 
                         if (cursor.moveToFirst()){
                             while (!cursor.isAfterLast()){
-                                if (name.equalsIgnoreCase(cursor.getString(0))){
+                                if (name.equals(cursor.getString(0))){
                                     activityName.setError(getResources().getString(R.string.act_name_taken));
                                     return;
                                 }
