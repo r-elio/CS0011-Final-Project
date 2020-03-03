@@ -38,6 +38,7 @@ public class HomeActivity extends AppCompatActivity
     public static ViewPager viewPager;
 
     FloatingActionButton fab;
+    Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -133,6 +134,9 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        calendar.set(Calendar.YEAR,year);
+        calendar.set(Calendar.MONTH,month);
+        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
         showTimePickerDialog();
     }
 
@@ -148,7 +152,15 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.SECOND,0);
 
+        DatabaseHelper.insertItem(db,HomeFragment.activityId,
+                DateTimeItem.inputFormat.format(calendar.getTime()));
+
+        if (viewPager.getAdapter() != null)
+            viewPager.getAdapter().notifyDataSetChanged();
     }
 
     @Override
@@ -167,40 +179,30 @@ public class HomeActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed(){
-        if (ActivityListAdapter.selectedPosition != -1 &&
-            viewPager.getCurrentItem() == 1){
-            ActivityListAdapter.selectedPosition = -1;
-            HomeFragment.activityId = "-1";
-
-            if (viewPager.getAdapter() != null)
-                viewPager.getAdapter().notifyDataSetChanged();
-        }
-        else {
-            new AlertDialog.Builder(this)
-                    .setIcon(R.drawable.ic_help_outline_blue_24dp)
-                    .setTitle(R.string.exit)
-                    .setMessage(R.string.exit_message)
-                    .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Cursor cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
-                                            DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
-                                    new String[]{id},null,null,null);
-                            cursor.moveToFirst();
-                            DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
-                            cursor.close();
-                            finish();
-                        }
-                    })
-                    .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    })
-                    .create()
-                    .show();
-        }
+        new AlertDialog.Builder(this)
+                .setIcon(R.drawable.ic_help_outline_blue_24dp)
+                .setTitle(R.string.exit)
+                .setMessage(R.string.exit_message)
+                .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Cursor cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
+                                        DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
+                                new String[]{id},null,null,null);
+                        cursor.moveToFirst();
+                        DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
+                        cursor.close();
+                        finish();
+                    }
+                })
+                .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                })
+                .create()
+                .show();
     }
 
     @Override

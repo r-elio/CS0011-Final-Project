@@ -112,9 +112,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 ACTIVITY_TABLE[0] + " = ?", new String[]{id});
     }
 
-    static void deleteActivity(SQLiteDatabase db, String id, String name){
-        db.delete("ACTIVITY",ACTIVITY_TABLE[1] + " = ? AND " +
-                ACTIVITY_TABLE[2] + " = ?", new String[]{id,name});
+    static void deleteActivity(SQLiteDatabase db, String id){
+        db.delete("ACTIVITY",ACTIVITY_TABLE[0] + " = ?", new String[]{id});
     }
 
     static void insertItem(SQLiteDatabase db, String id, String...values){

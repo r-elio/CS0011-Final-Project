@@ -83,12 +83,9 @@ public class HomeFragment extends Fragment implements
                             activityId = "-1";
                         }
 
-                        DatabaseHelper.deleteActivity(HomeActivity.db,HomeActivity.id,adapter.getItem(position).getId());
+                        DatabaseHelper.deleteActivity(HomeActivity.db,adapter.getItem(position).getId());
                         activityItems.remove(position);
                         adapter.notifyItemRemoved(position);
-
-                        if (HomeActivity.viewPager.getAdapter() != null)
-                            HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

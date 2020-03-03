@@ -25,6 +25,9 @@ public class ActivityFragment extends Fragment implements
     private ArrayList<DateTimeItem> dateTimeItems;
     private ItemListAdapter adapter;
 
+    private int selectedPosition;
+    private Calendar calendar = Calendar.getInstance();
+
     public ActivityFragment() { }
 
     @Override
@@ -72,6 +75,8 @@ public class ActivityFragment extends Fragment implements
         if (adapter.getItem(position).getEndDateTime() == null){
             showDatePickerDialog();
         }
+
+        selectedPosition = position;
     }
 
     @Override
@@ -113,6 +118,9 @@ public class ActivityFragment extends Fragment implements
 
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+        calendar.set(Calendar.YEAR,year);
+        calendar.set(Calendar.MONTH,month);
+        calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth);
         showTimePickerDialog();
     }
 
@@ -128,6 +136,16 @@ public class ActivityFragment extends Fragment implements
 
     @Override
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        System.out.println("TIME");
+        calendar.set(Calendar.HOUR_OF_DAY,hourOfDay);
+        calendar.set(Calendar.MINUTE,minute);
+        calendar.set(Calendar.SECOND,0);
+
+        DatabaseHelper.updateItem(HomeActivity.db,
+                adapter.getItem(selectedPosition).getId(),
+                adapter.getItem(selectedPosition).getStartDateTime(),
+                DateTimeItem.inputFormat.format(calendar.getTime()));
+
+        if (HomeActivity.viewPager.getAdapter() != null)
+            HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
     }
 }

@@ -6,11 +6,11 @@ import java.util.Date;
 import java.util.Locale;
 
 class DateTimeItem {
-    private static final String inputPattern = "yyyy-MM-dd hh:mm";
+    private static final String inputPattern = "yyyy-MM-dd HH:mm";
     private static final String outputPattern = "h:mm a";
 
     static SimpleDateFormat inputFormat = new SimpleDateFormat(inputPattern, Locale.getDefault());
-    static SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.getDefault());
+    private static SimpleDateFormat outputFormat = new SimpleDateFormat(outputPattern, Locale.getDefault());
 
     private String id;
     private String startDateTime;
