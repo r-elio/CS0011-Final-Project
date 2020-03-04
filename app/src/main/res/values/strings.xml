@@ -59,4 +59,23 @@
     <string name="channel_name">CHANNEL</string>
     <string name="channel_description">CHANNEL DESCRIPTION</string>
     <string name="notif_title">Ongoing Activities</string>
+    <string name="help_title">USER GUIDE</string>
+    <string name="question1">How to Update Profile?</string>
+    <string name="answer1">1. Select the profile tab.\n2. Press the floating edit button.\n3. Edit and fill the required fields.\n4. Press \"SAVE\" to save changes or press back button to discard changes.</string>
+    <string name="question2">How to Delete Profile?</string>
+    <string name="answer2">1. Select the profile tab.\n2. Press the \"Delete Account\".\n3. Press \"YES\" to delete the account or \"NO\" to cancel.</string>
+    <string name="question3">How to Insert Activity?</string>
+    <string name="answer3">1. Select the home tab.\n2. Press the floating add button.\n3. Enter the activity name.\n4. Press \"ADD\" to insert activity or \"CANCEL\" to abort.</string>
+    <string name="question4">How to Delete Activity?</string>
+    <string name="answer4">1. Select the home tab.\n2. Press and hold an activity on the list.\n3. Press \"YES\" to delete the activity or \"NO\" to cancel.</string>
+    <string name="question5">How to Insert Activity Time?</string>
+    <string name="answer5">1. Select an activity on the home tab.\n2. The app will go to the activity tab.\n3. Press the floating add button on the activity tab.\n4. Set the date and time.\n5. The app will automatically insert the added item on the specified activity.</string>
+    <string name="question6">How to Add End Datetime?</string>
+    <string name="answer6">1. Select an activity on the home tab.\n2. Select an item with no end time on it.\n3. Set the date and time.\n4. The app will automatically insert the end time on the specified item.</string>
+    <string name="question7">How to Update Activity Time?</string>
+    <string name="answer7">1. Select an activity on the home tab.\n2. Select an item with having a start and end time.\n3. The update time dialog will appear.\n4. Press a button to edit start time or end time.\n5. Set the date and time.\n6. Press \"Save\" to save changes or \"CANCEL\" to discard changes.</string>
+    <string name="question8">How to Delete Activity Time?</string>
+    <string name="answer8">1. Select an activity on the home tab.\n2. Select an item to be deleted.\n3. Press \"YES\" to delete the item or \"NO\" to cancel.</string>
+    <string name="question9">How to Logout?</string>
+    <string name="answer9">1. Select the options menu.\n2. Press the logout button\n3. Press \"YES\" to logout or \"NO\" to cancel.\n4. The app will redirect you to the login screen.</string>
 </resources>
