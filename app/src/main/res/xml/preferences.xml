@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:key="@string/notif_pref"
+        android:title="Enable notification" />
+
+    <PreferenceCategory
+        android:key="about"
+        android:title="@string/about">
+
+        <Preference
+            android:title="@string/developer"
+            android:summary="Rajan N. Elio"/>
+        <Preference
+            android:title="@string/build_version"
+            android:summary="1.33"/>
+
+    </PreferenceCategory>
+</PreferenceScreen>

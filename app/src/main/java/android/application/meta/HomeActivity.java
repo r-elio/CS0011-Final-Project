@@ -7,12 +7,13 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager.widget.ViewPager;
 import android.app.DatePickerDialog;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -198,7 +199,14 @@ public class HomeActivity extends AppCompatActivity implements
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        exitApplication();
+
+                        saveRecentLogin();
+
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);
+                        boolean isNotificationOn = sharedPreferences.getBoolean(getResources().getString(R.string.notif_pref),false);
+                        if (isNotificationOn) notifyOngoingActivities();
+
+                        finish();
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
@@ -211,15 +219,18 @@ public class HomeActivity extends AppCompatActivity implements
                 .show();
     }
 
-    private void exitApplication(){
+    private void saveRecentLogin(){
         Cursor cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
                         DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
                 new String[]{id},null,null,null);
 
         cursor.moveToFirst();
         DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
+        cursor.close();
+    }
 
-        cursor = db.rawQuery("SELECT NAME FROM ACTIVITY WHERE ACCOUNTID = ? AND _ID IN (" +
+    private void notifyOngoingActivities(){
+        Cursor cursor = db.rawQuery("SELECT NAME FROM ACTIVITY WHERE ACCOUNTID = ? AND _ID IN (" +
                 "SELECT DISTINCT ACTIVITYID FROM ITEM WHERE ENDDATETIME IS NULL)", new String[]{id});
 
         if (cursor.moveToFirst()){
@@ -234,8 +245,6 @@ public class HomeActivity extends AppCompatActivity implements
             startService(intent);
         }
         cursor.close();
-
-        finish();
     }
 
     @Override

@@ -78,4 +78,8 @@
     <string name="answer8">1. Select an activity on the home tab.\n2. Select an item to be deleted.\n3. Press \"YES\" to delete the item or \"NO\" to cancel.</string>
     <string name="question9">How to Logout?</string>
     <string name="answer9">1. Select the options menu.\n2. Press the logout button\n3. Press \"YES\" to logout or \"NO\" to cancel.\n4. The app will redirect you to the login screen.</string>
+    <string name="about">About</string>
+    <string name="developer">Developed by</string>
+    <string name="build_version">Build version</string>
+    <string name="notif_pref">notification</string>
 </resources>
