@@ -4,15 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 import android.app.DatePickerDialog;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -21,7 +17,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,9 +34,6 @@ public class HomeActivity extends AppCompatActivity implements
         ItemDialogFragment.DateTimeItemListener,
         DatePickerDialog.OnDateSetListener,
         TimePickerDialog.OnTimeSetListener {
-
-    public static final String CHANNEL_ID = "CHANNEL_ID";
-    public static final int NOTIFICATIONID = 69;
 
     public static final String EXTRA_ID = "id";
     public static SQLiteDatabase db;
@@ -231,52 +223,19 @@ public class HomeActivity extends AppCompatActivity implements
                 "SELECT DISTINCT ACTIVITYID FROM ITEM WHERE ENDDATETIME IS NULL)", new String[]{id});
 
         if (cursor.moveToFirst()){
-
             StringBuilder text = new StringBuilder();
             while (!cursor.isAfterLast()){
                 text.append(cursor.getString(0).toUpperCase()).append('\n');
                 cursor.moveToNext();
             }
 
-            createNotificationChannel();
-
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this,0,intent,0);
-
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(this,CHANNEL_ID)
-                    .setSmallIcon(R.mipmap.ic_launcher_foreground)
-                    .setContentTitle(getResources().getString(R.string.notif_title))
-                    .setContentText(text.toString())
-                    .setStyle(new NotificationCompat.BigTextStyle()
-                    .bigText(text.toString()))
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-                    .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-                    .setCategory(NotificationCompat.CATEGORY_MESSAGE)
-                    .setContentIntent(pendingIntent)
-                    .setOnlyAlertOnce(true)
-                    .setAutoCancel(true)
-                    .setOngoing(true);
-
-            NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-            notificationManager.notify(NOTIFICATIONID,builder.build());
+            Intent intent = new Intent(this, NotificationService.class);
+            intent.putExtra(NotificationService.EXTRA_TEXT,text.toString());
+            startService(intent);
         }
         cursor.close();
 
         finish();
-    }
-
-    private void createNotificationChannel(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
-            CharSequence name = getString(R.string.channel_name);
-            String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager == null) return;
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     @Override
