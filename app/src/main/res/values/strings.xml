@@ -56,4 +56,7 @@
     <string name="end_datetime">End DateTime:</string>
     <string name="start_datetime">Start DateTime:</string>
     <string name="update_time">Update Time</string>
+    <string name="channel_name">CHANNEL</string>
+    <string name="channel_description">CHANNEL DESCRIPTION</string>
+    <string name="notif_title">Ongoing Activities</string>
 </resources>

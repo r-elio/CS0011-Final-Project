@@ -45,7 +45,8 @@ public class ActivityFragment extends Fragment implements
                         DatabaseHelper.ITEM_TABLE[2],
                         DatabaseHelper.ITEM_TABLE[3]},
                 DatabaseHelper.ITEM_TABLE[1] + " = ?",
-                new String[]{HomeFragment.activityId},null,null,null);
+                new String[]{HomeFragment.activityId},null,null,
+                DatabaseHelper.ITEM_TABLE[2]);
 
         dateTimeItems = new ArrayList<>();
 
