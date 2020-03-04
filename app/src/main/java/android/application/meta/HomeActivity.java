@@ -234,7 +234,7 @@ public class HomeActivity extends AppCompatActivity implements
 
             StringBuilder text = new StringBuilder();
             while (!cursor.isAfterLast()){
-                text.append(cursor.getString(0)).append('\n');
+                text.append(cursor.getString(0).toUpperCase()).append('\n');
                 cursor.moveToNext();
             }
 
