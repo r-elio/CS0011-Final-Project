@@ -35,8 +35,10 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
         try {
             String startStr = dateTimeItems.get(position).getStartTime();
             String endStr = dateTimeItems.get(position).getEndTime();
+            String rangeStr = dateTimeItems.get(position).getTimeRange();
             holder.startTime.setText(startStr);
             holder.endTime.setText(endStr);
+            holder.timeRange.setText(rangeStr);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -51,11 +53,13 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
             implements View.OnClickListener, View.OnLongClickListener {
         private TextView startTime;
         private TextView endTime;
+        private TextView timeRange;
 
         ViewHolder(View itemView){
             super(itemView);
             startTime = itemView.findViewById(R.id.startTime);
             endTime = itemView.findViewById(R.id.endTime);
+            timeRange = itemView.findViewById(R.id.timeRange);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);

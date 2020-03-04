@@ -91,6 +91,9 @@ public class ActivityFragment extends Fragment implements
                         DatabaseHelper.deleteItem(HomeActivity.db,adapter.getItem(position).getId());
                         dateTimeItems.remove(position);
                         adapter.notifyItemRemoved(position);
+
+                        if (HomeActivity.viewPager.getAdapter() != null)
+                            HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {

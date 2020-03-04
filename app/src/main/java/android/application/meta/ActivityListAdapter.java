@@ -34,7 +34,9 @@ public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapte
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         String activity = activityItems.get(position).getName();
-        holder.textView.setText(activity);
+        String average = activityItems.get(position).getAverageTime();
+        holder.activityName.setText(activity);
+        holder.averageTime.setText(average);
         if (selectedPosition == position){
             holder.itemView.setBackgroundResource(R.color.colorPrimary);
         }
@@ -55,11 +57,13 @@ public class ActivityListAdapter extends RecyclerView.Adapter<ActivityListAdapte
     public class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
 
-        TextView textView;
+        TextView activityName;
+        TextView averageTime;
 
         ViewHolder(View itemView){
             super(itemView);
-            textView = itemView.findViewById(R.id.activity_name);
+            activityName = itemView.findViewById(R.id.activity_name);
+            averageTime = itemView.findViewById(R.id.average_time);
 
             itemView.setOnClickListener(this);
             itemView.setOnLongClickListener(this);
