@@ -81,6 +81,7 @@ public class HomeFragment extends Fragment implements
                     public void onClick(DialogInterface dialog, int which) {
                         if (adapter.getItem(position).getId().equals(activityId)){
                             activityId = "-1";
+                            ActivityListAdapter.selectedPosition = -1;
                         }
 
                         DatabaseHelper.deleteActivity(HomeActivity.db,adapter.getItem(position).getId());

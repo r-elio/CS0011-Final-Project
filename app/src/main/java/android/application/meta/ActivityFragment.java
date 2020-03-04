@@ -15,12 +15,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
+import android.widget.Toast;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class ActivityFragment extends Fragment implements
         ItemListAdapter.ItemClickListener,
-        ItemListAdapter.ItemLongClickListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+        ItemListAdapter.ItemLongClickListener,
+        DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener {
 
     private ArrayList<DateTimeItem> dateTimeItems;
     private ItemListAdapter adapter;
@@ -74,6 +78,13 @@ public class ActivityFragment extends Fragment implements
     public void onItemClick(View view, int position) {
         if (adapter.getItem(position).getEndDateTime() == null){
             showDatePickerDialog();
+        }
+        else {
+            ItemDialogFragment dialog = new ItemDialogFragment(adapter.getItem(position).getId());
+            dialog.setCancelable(false);
+
+            if (getFragmentManager() == null) return;
+            dialog.show(getFragmentManager(),null);
         }
 
         selectedPosition = position;
@@ -143,10 +154,21 @@ public class ActivityFragment extends Fragment implements
         calendar.set(Calendar.MINUTE,minute);
         calendar.set(Calendar.SECOND,0);
 
-        DatabaseHelper.updateItem(HomeActivity.db,
-                adapter.getItem(selectedPosition).getId(),
-                adapter.getItem(selectedPosition).getStartDateTime(),
-                DateTimeItem.inputFormat.format(calendar.getTime()));
+        try {
+            if (DateTimeItem.isDateTimeRangeValid(
+                    adapter.getItem(selectedPosition).getStartDateTime(),
+                    DateTimeItem.inputFormat.format(calendar.getTime()))){
+                DatabaseHelper.updateItem(HomeActivity.db,
+                        adapter.getItem(selectedPosition).getId(),
+                        adapter.getItem(selectedPosition).getStartDateTime(),
+                        DateTimeItem.inputFormat.format(calendar.getTime()));
+            }
+            else {
+                Toast.makeText(getContext(),R.string.invalid_time,Toast.LENGTH_SHORT).show();
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         if (HomeActivity.viewPager.getAdapter() != null)
             HomeActivity.viewPager.getAdapter().notifyDataSetChanged();

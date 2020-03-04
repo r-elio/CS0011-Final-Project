@@ -8,7 +8,6 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -29,8 +28,11 @@ import com.google.android.material.tabs.TabLayout;
 
 import java.util.Calendar;
 
-public class HomeActivity extends AppCompatActivity
-        implements ActivityDialogFragment.EditTextListener, DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+public class HomeActivity extends AppCompatActivity implements
+        ActivityDialogFragment.EditTextListener,
+        ItemDialogFragment.DateTimeItemListener,
+        DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener {
 
     public static final String EXTRA_ID = "id";
     public static SQLiteDatabase db;
@@ -172,6 +174,15 @@ public class HomeActivity extends AppCompatActivity
     }
 
     @Override
+    public void onUpdateDateTimeItem(String id, String startDateTime, String endDateTime) {
+        DatabaseHelper.updateItem(HomeActivity.db,
+                id,startDateTime,endDateTime);
+
+        if (HomeActivity.viewPager.getAdapter() != null)
+            HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
     protected void onDestroy(){
         super.onDestroy();
         db.close();
@@ -192,6 +203,7 @@ public class HomeActivity extends AppCompatActivity
                         cursor.moveToFirst();
                         DatabaseHelper.recentLogin(db,cursor.getString(0),cursor.getString(1));
                         cursor.close();
+
                         finish();
                     }
                 })

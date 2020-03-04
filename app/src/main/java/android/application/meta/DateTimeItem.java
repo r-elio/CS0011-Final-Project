@@ -68,6 +68,19 @@ class DateTimeItem {
         long hours = minutes / 60;
         minutes %= 60;
 
-        return String.format(Locale.getDefault(),"%d h %02d min",hours,minutes);
+        if (hours == 0)
+            return String.format(Locale.getDefault(),"%d min",minutes);
+        else if (minutes == 0)
+            return String.format(Locale.getDefault(),"%d h",hours);
+        else
+            return String.format(Locale.getDefault(),"%d h %d min",hours,minutes);
+    }
+
+    static boolean isDateTimeRangeValid(String startDateTime, String endDateTime) throws ParseException {
+        Date startDate = inputFormat.parse(startDateTime);
+        Date endDate = inputFormat.parse(endDateTime);
+        if (startDate == null || endDate == null) return false;
+        long range = endDate.getTime() - startDate.getTime();
+        return range > 0;
     }
 }
