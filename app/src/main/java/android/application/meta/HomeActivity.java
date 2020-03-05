@@ -199,7 +199,6 @@ public class HomeActivity extends AppCompatActivity implements
                 .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-
                         saveRecentLogin();
 
                         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(HomeActivity.this);

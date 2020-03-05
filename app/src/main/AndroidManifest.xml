@@ -12,6 +12,7 @@
         android:theme="@style/AppTheme">
         <service
             android:name=".NotificationService"
+            android:enabled="true"
             android:exported="false"/>
 
         <activity

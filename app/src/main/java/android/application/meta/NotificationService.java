@@ -1,67 +1,79 @@
 package android.application.meta;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import android.os.IBinder;
 
-public class NotificationService extends IntentService {
+import androidx.core.app.NotificationCompat;
+
+public class NotificationService extends Service {
 
     public static final String EXTRA_TEXT = "TEXT";
-    public static final String CHANNEL_ID = "CHANNEL_ID";
+    public static final String CHANNEL_ID = "CHANNEL";
     public static final int NOTIFICATION_ID = 69;
 
     public NotificationService() {
-        super("NotificationService");
     }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        String text = intent.getStringExtra(EXTRA_TEXT);
-        buildNotification(text);
+    public void onCreate() {
+        super.onCreate();
     }
 
-    private void buildNotification(String text){
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
         createNotificationChannel();
+        String text = intent.getStringExtra(EXTRA_TEXT);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this,CHANNEL_ID)
+        Intent actionIntent = new Intent(this, MainActivity.class);
+        actionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setSmallIcon(R.mipmap.ic_launcher_foreground)
                 .setContentTitle(getResources().getString(R.string.notif_title))
                 .setContentText(text)
+                .setContentIntent(pendingIntent)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(text))
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setOnlyAlertOnce(true)
                 .setAutoCancel(true)
-                .setOngoing(true);
+                .setOngoing(true)
+                .build();
 
-        Intent actionIntent = new Intent(this, MainActivity.class);
-        actionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this,0,actionIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+        startForeground(NOTIFICATION_ID,notification);
 
-        builder.setContentIntent(pendingIntent);
-
-        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
-        notificationManager.notify(NOTIFICATION_ID,builder.build());
+        return START_NOT_STICKY;
     }
 
     private void createNotificationChannel(){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             CharSequence name = getString(R.string.channel_name);
             String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_HIGH;
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
             channel.setDescription(description);
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            if (notificationManager == null) return;
-            notificationManager.createNotificationChannel(channel);
+            if (notificationManager != null)
+                notificationManager.createNotificationChannel(channel);
         }
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
