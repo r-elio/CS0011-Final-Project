@@ -30,16 +30,9 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         createNotificationChannel();
         String text = intent.getStringExtra(EXTRA_TEXT);
-        final Notification notification = buildNotification(text);
 
-        final Handler handler = new Handler();
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                startForeground(NOTIFICATION_ID,notification);
-                handler.postDelayed(this, 10000);
-            }
-        });
+        Notification notification = buildNotification(text);
+        startForeground(NOTIFICATION_ID,notification);
 
         return START_REDELIVER_INTENT;
     }

@@ -5,12 +5,12 @@
     <SwitchPreference
         android:key="@string/notif_pref"
         android:title="Enable notification"
-        android:defaultValue="true"/>
+        android:defaultValue="false"/>
 
     <SwitchPreference
         android:key="@string/login_pref"
         android:title="Enable auto-login"
-        android:defaultValue="true"/>
+        android:defaultValue="false"/>
 
     <PreferenceCategory
         android:key="about"
