@@ -19,6 +19,11 @@
         android:title="@string/about">
 
         <Preference
+            android:icon="@drawable/splash_icon"
+            android:title="@string/app_name"
+            android:summary="@string/app_description"/>
+
+        <Preference
             android:icon="@drawable/ic_person_black_24dp"
             android:title="@string/developer"
             android:summary="Rajan N. Elio"/>
