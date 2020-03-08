@@ -98,7 +98,6 @@ public class ActivityDialogFragment extends AppCompatDialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-
         try {
             listener = (EditTextListener) context;
         } catch (ClassCastException e) {

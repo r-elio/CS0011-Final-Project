@@ -2,7 +2,6 @@ package android.application.meta;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-
 import android.os.Bundle;
 
 public class SettingsActivity extends AppCompatActivity {

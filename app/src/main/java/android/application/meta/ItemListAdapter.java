@@ -51,12 +51,14 @@ public class ItemListAdapter extends RecyclerView.Adapter<ItemListAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder
             implements View.OnClickListener, View.OnLongClickListener {
+
         private TextView startTime;
         private TextView endTime;
         private TextView timeRange;
 
         ViewHolder(View itemView){
             super(itemView);
+
             startTime = itemView.findViewById(R.id.startTime);
             endTime = itemView.findViewById(R.id.endTime);
             timeRange = itemView.findViewById(R.id.timeRange);

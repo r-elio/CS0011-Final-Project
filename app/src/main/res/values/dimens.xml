@@ -5,4 +5,7 @@
     <dimen name="screen_padding">16dp</dimen>
     <dimen name="toolbar_elevation">8dp</dimen>
     <dimen name="text_margin">8dp</dimen>
+    <dimen name="layout_margin">16dp</dimen>
+    <dimen name="excess_margin">40dp</dimen>
+    <dimen name="image_margin">32dp</dimen>
 </resources>

@@ -17,12 +17,14 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatDialogFragment;
-
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 
-public class ItemDialogFragment extends AppCompatDialogFragment implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener {
+public class ItemDialogFragment extends AppCompatDialogFragment implements
+        DatePickerDialog.OnDateSetListener,
+        TimePickerDialog.OnTimeSetListener {
+
     private String id;
     private Button startDateTime;
     private Button endDateTime;

@@ -1,7 +1,6 @@
 package android.application.meta;
 
 import android.database.Cursor;
-
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Locale;
