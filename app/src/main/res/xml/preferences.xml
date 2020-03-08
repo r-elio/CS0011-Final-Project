@@ -30,7 +30,7 @@
         <Preference
             android:icon="@drawable/ic_build_black_24dp"
             android:title="@string/build_version"
-            android:summary="1.39"/>
+            android:summary="1.69"/>
 
     </PreferenceCategory>
 </PreferenceScreen>
