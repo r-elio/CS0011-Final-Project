@@ -2,11 +2,11 @@ package android.application.meta;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.NotificationManager;
+import androidx.preference.PreferenceManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
@@ -156,6 +156,13 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(this, NotificationService.class);
         stopService(intent);
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        boolean isAutoLoginOn = sharedPreferences.getBoolean(getResources().getString(R.string.login_pref),false);
+        if (isAutoLoginOn) autoLogin();
+
+    }
+
+    private void autoLogin(){
         cursor = db.query("ACCOUNT", new String[]{DatabaseHelper.ACCOUNT_TABLE[1],
                         DatabaseHelper.ACCOUNT_TABLE[2]}, DatabaseHelper.ACCOUNT_TABLE[0] + " = ?",
                 new String[]{"1"},null,null,null);

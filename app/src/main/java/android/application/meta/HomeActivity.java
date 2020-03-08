@@ -192,6 +192,17 @@ public class HomeActivity extends AppCompatActivity implements
 
     @Override
     public void onBackPressed(){
+        if (viewPager.getAdapter() != null &&
+            viewPager.getCurrentItem() == 2 &&
+            !HomeFragment.activityId.equals("-1") &&
+            ActivityListAdapter.selectedPosition != -1){
+            HomeFragment.activityId = "-1";
+            ActivityListAdapter.selectedPosition = -1;
+            viewPager.getAdapter().notifyDataSetChanged();
+            viewPager.setCurrentItem(1,true);
+            return;
+        }
+
         new AlertDialog.Builder(this)
                 .setIcon(R.drawable.ic_help_outline_blue_24dp)
                 .setTitle(R.string.exit)

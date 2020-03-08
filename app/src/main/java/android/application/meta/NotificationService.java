@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 
 import androidx.core.app.NotificationCompat;
@@ -29,13 +30,26 @@ public class NotificationService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         createNotificationChannel();
         String text = intent.getStringExtra(EXTRA_TEXT);
+        final Notification notification = buildNotification(text);
 
+        final Handler handler = new Handler();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                startForeground(NOTIFICATION_ID,notification);
+                handler.postDelayed(this,1000);
+            }
+        });
+
+        return START_REDELIVER_INTENT;
+    }
+
+    private Notification buildNotification(String text){
         Intent actionIntent = new Intent(this, MainActivity.class);
         actionIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0,actionIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification notification = new NotificationCompat.Builder(this,CHANNEL_ID)
-                .setDefaults(Notification.DEFAULT_ALL)
+        return new NotificationCompat.Builder(this,CHANNEL_ID)
                 .setSmallIcon(R.mipmap.ic_launcher_foreground)
                 .setContentTitle(getResources().getString(R.string.notif_title))
                 .setContentText(text)
@@ -48,10 +62,6 @@ public class NotificationService extends Service {
                 .setAutoCancel(true)
                 .setOngoing(true)
                 .build();
-
-        startForeground(NOTIFICATION_ID,notification);
-
-        return START_NOT_STICKY;
     }
 
     private void createNotificationChannel(){

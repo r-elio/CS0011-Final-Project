@@ -82,4 +82,5 @@
     <string name="developer">Developed by</string>
     <string name="build_version">Build version</string>
     <string name="notif_pref">notification</string>
+    <string name="login_pref">auto-login</string>
 </resources>

@@ -64,7 +64,7 @@ public class HomeFragment extends Fragment implements
 
         if (HomeActivity.viewPager.getAdapter() != null){
             HomeActivity.viewPager.getAdapter().notifyDataSetChanged();
-            HomeActivity.viewPager.arrowScroll(View.FOCUS_RIGHT);
+            HomeActivity.viewPager.setCurrentItem(2,true);
         }
 
         ActivityListAdapter.selectedPosition = position;
