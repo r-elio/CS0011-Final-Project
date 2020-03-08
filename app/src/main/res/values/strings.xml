@@ -84,4 +84,5 @@
     <string name="notif_pref">notification</string>
     <string name="login_pref">auto-login</string>
     <string name="app_description">Time-based tracker application</string>
+    <string name="register_success">Registration Successful!</string>
 </resources>

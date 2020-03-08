@@ -16,6 +16,8 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -157,6 +159,7 @@ public class RegisterActivity extends AppCompatActivity {
                 }
                 else {
                     DatabaseHelper.insertAccount(db,userStr,passStr,firstStr,lastStr);
+                    Toast.makeText(RegisterActivity.this,R.string.register_success,Toast.LENGTH_SHORT).show();
                     finish();
                 }
             }
