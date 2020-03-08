@@ -34,7 +34,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 "FIRSTNAME TEXT," +
                 "LASTNAME TEXT);");
         insertAccount(db,"","");
-        insertAccount(db,"r","e","Rajan","Elio");
 
         db.execSQL("CREATE TABLE ACTIVITY (" +
                 "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
